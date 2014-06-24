@@ -146,14 +146,14 @@ struct dirent *readdir(DIR *dir)
 	else
 		return 0;
 }
-
+/*
 char *index(char *str, char c)
 {
 	char match[2]={c,'\0'};
 	unsigned int pos = strcspn(str,match);
   return (pos == 0) ? ((str[0] == c) ? str : 0) : ((pos == strlen(str)) ? 0 : &str[pos]);
 }
-
+*/
 STATIC_ROUTINE char *GetRegistry(char *where, char *pathname)
 {
   HKEY regkey=(HKEY)0;
@@ -339,23 +339,29 @@ void *LibCallg(void **arglist, FARPROC *routine)
 */
 #define ETIMEDOUT 42
 
-
+#ifndef HAVE_PTHREAD_DETACH
 void pthread_detach(HANDLE *thread)
 {
 	return;
 }
+#endif
 
+#ifndef HAVE_PTHREAD_COND_INIT
 int pthread_cond_init(HANDLE *cond, void *def)
 {
   *cond = CreateEvent(NULL,TRUE,FALSE,NULL);
   return (*cond == NULL);
 }
+#endif
 
+#ifndef HAVE_PTHREAD_COND_DESTROY
 BOOL pthread_cond_destroy(HANDLE *cond)
 {
    return CloseHandle(*cond);
 }
+#endif
 
+#ifndef HAVE_PTHREAD_COND_SIGNAL
 int pthread_cond_signal(HANDLE *cond)
 {
   BOOL status;
@@ -373,7 +379,9 @@ int pthread_cond_signal(HANDLE *cond)
 #endif
   return status == 0;
 }
+#endif
 
+#ifndef HAVE_PTHREAD_COND_WAIT
 int pthread_cond_wait(HANDLE *cond, HANDLE *mutex)
 {
 	int status;
@@ -388,7 +396,9 @@ int pthread_cond_wait(HANDLE *cond, HANDLE *mutex)
 #endif
    return(status == WAIT_FAILED);
 }
+#endif
 
+#ifndef HAVE_PTHREAD_COND_TIMEDWAIT
 int pthread_cond_timedwait(HANDLE *cond, HANDLE *mutex, int msec)
 {
    int status;
@@ -401,19 +411,29 @@ int pthread_cond_timedwait(HANDLE *cond, HANDLE *mutex, int msec)
      status = 0;
    return status;
 }
+#endif
 
+#ifndef HAVE_PTHREAD_MUTEX_INIT
 int pthread_mutex_init(HANDLE *mutex, void *dummy)
 {
   *mutex = CreateMutex(0,FALSE,NULL);
   return (*mutex == NULL);
 }
+#endif
 
+#ifndef HAVE_PTHREAD_MUTEX_DESTROY
 BOOL pthread_mutex_destroy(HANDLE *mutex)
 {
   return CloseHandle(*mutex);
 }
+#endif
 
+#ifndef HAVE_PTHREAD_MUTEX_INIT
 STATIC_THREADSAFE HANDLE global_mutex = NULL;
+#else
+STATIC_THREADSAFE pthread_mutex_t global_mutex;
+#endif
+
 STATIC_THREADSAFE int global_mutex_initialized = 0;
 void pthread_unlock_global_np()
 {
@@ -425,6 +445,7 @@ void pthread_unlock_global_np()
   pthread_mutex_unlock(&global_mutex);
 
 }
+#ifndef HAVE_PTHREAD_LOCK_GLOBAL_NP
 void pthread_lock_global_np()
 {
   if (!global_mutex_initialized)
@@ -434,20 +455,29 @@ void pthread_lock_global_np()
   }
   pthread_mutex_lock(&global_mutex);
 }
+#endif
 
+#ifndef HAVE_PTHREAD_EXIT
 int pthread_exit(int status)
 {
 	return status;
 }
+#endif
 
+#ifndef HAVE_PTHREAD_CREATE
 int pthread_create(pthread_t *thread, void *dummy, void *(*rtn)(void *), void *rtn_param)
 {
   *thread = (pthread_t)_beginthread( (void (*)(void *))rtn, 0, rtn_param);
   return *thread == 0;
 }
+#endif
+#ifndef HAVE_PTHREAD_CLEANUP_POP
 void pthread_cleanup_pop(){}
+#endif
+#ifndef HAVE_PTHREAD_CLEANUP_PUSH
 void pthread_cleanup_push(){}
-
+#endif
+#ifndef HAVE_PTHREAD_MUTEX_LOCK
 int pthread_mutex_lock(HANDLE *mutex)
 {
 	int status;
@@ -460,7 +490,9 @@ int pthread_mutex_lock(HANDLE *mutex)
 #endif
    return status;
 }
+#endif
 
+#ifndef HAVE_PTHREAD_MUTEX_UNLOCK
 int pthread_mutex_unlock(HANDLE *mutex)
 {
 	int status;
@@ -473,11 +505,14 @@ int pthread_mutex_unlock(HANDLE *mutex)
 #endif
 	return status;
 }
+#endif
 
+#ifndef HAVE_PTHREAD_MUTEX_CANCEL
 void pthread_cancel(HANDLE thread)
 {
 	printf("Abort not supported");
 }
+#endif
 
 #else /* WIN32 */
 #ifdef HAVE_VXWORKS_H
