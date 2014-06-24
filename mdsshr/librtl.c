@@ -1682,6 +1682,9 @@ int LibConvertDateString(char *asc_time, int64_t *qtime)
 int LibTimeToVMSTime(time_t *time_in,int64_t *time_out) {
   time_t t;
 #ifdef HAVE_GETTIMEOFDAY
+#ifdef HAVE_WINDOWS_H
+  typedef long suseconds_t;
+#endif
   struct timeval tm;
   suseconds_t microseconds=0;
   if (time_in == NULL) {
