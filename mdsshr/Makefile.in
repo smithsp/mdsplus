@@ -2,6 +2,11 @@ include @top_srcdir@/Makefile.inc
 
 CFLAGS=@CFLAGS@ @GLOBUS_CFLAGS@
 LIBS=@LIBS@ @LIBDL@ @SOCKETLIB@ @NSLLIB@
+ifeq "@MEMCHKLIB@" ""
+	MDSMALLOC =
+else
+	MDSMALLOC = MdsMalloc.c
+endif
 
 SOURCES = \
         librtl.c \
@@ -19,7 +24,7 @@ SOURCES = \
         MdsSerialize.c \
         MdsShrThreadSafe.c \
         MdsXdRoutines.c \
-	MdsMalloc.c \
+	$(MDSMALLOC) \
 	mds_dsc_string.c \
 	MdsFloatToTime.c \
 	UdpEvents.c
