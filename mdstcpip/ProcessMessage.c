@@ -7,7 +7,9 @@
 #define write _write
 #define open _open
 #define close _close
+#ifndef HAVE_PTHREAD_H
 typedef int mode_t;
+#endif
 #else
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
