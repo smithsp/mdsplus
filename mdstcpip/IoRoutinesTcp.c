@@ -485,7 +485,7 @@ VOID CALLBACK ShutdownEvent(PVOID arg,BOOLEAN fired) {
   exit(0);
 }
 
-static int GetSocketHandle(char *name) {
+int GetSocketHandle(char *name) {
   char logfile[1024];
   HANDLE h;
   int ppid;
