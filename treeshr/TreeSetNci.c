@@ -35,6 +35,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <io.h>
+#ifdef HAVE_PTHREAD_H
+#include <pthread.h>
+#endif
 #else
 #ifndef HAVE_VXWORKS_H
 #include <pthread.h>
