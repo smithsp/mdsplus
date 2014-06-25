@@ -191,8 +191,7 @@ char *TranslateLogical(char *pathname)
   return path;
 }
 
-int LibSpawn(struct descriptor *cmd, int waitFlag, int notifyFlag)
-{
+int LibSpawn(struct descriptor *cmd, int waitFlag, int notifyFlag) {
 
   char *cmd_c = MdsDescrToCstring(cmd);
   int status;
@@ -200,7 +199,7 @@ int LibSpawn(struct descriptor *cmd, int waitFlag, int notifyFlag)
   char *tok;
   tok = strtok(cmd_c," ");
   arglist[0] = (char *)6;
-  arglist[1] = (char *)(waitFlag ? _P_WAIT :  _P_NOWAIT);
+  arglist[1] = (char *)(NULL+(waitFlag ? _P_WAIT :  _P_NOWAIT));
   arglist[2] = "cmd";
   arglist[3] = arglist[2];
   arglist[4] = "/C";
@@ -209,9 +208,9 @@ int LibSpawn(struct descriptor *cmd, int waitFlag, int notifyFlag)
   {
 
 	  if (strlen(tok) > 0)
-		arglist[(int)(arglist[0]++)] = tok;
+	    arglist[(arglist[0]++) - NULL] = tok;
   }
-  arglist[((int)arglist[0])] = (char *)0;
+  arglist[((int)arglist[0])] = NULL;
   status = (char *)LibCallg(arglist,_spawnlp)-(char *)0;
   /*if (status != 0) perror("Error doing spawn"); */
   free(cmd_c);
@@ -1486,6 +1485,9 @@ int LibTimeToVMSTime(time_t *time_in,int64_t *time_out) {
   time_t t;
 #ifdef HAVE_GETTIMEOFDAY
   struct timeval tm;
+#ifdef HAVE_WINDOWS_H
+  typedef long long suseconds_t;
+#endif
   suseconds_t microseconds=0;
   if (time_in == NULL) {
     gettimeofday(&tm,0);
