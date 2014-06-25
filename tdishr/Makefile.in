@@ -1,6 +1,6 @@
 include @top_srcdir@/Makefile.inc
 
-LIBS=-L@MAKESHLIBDIR@  -lTreeShr -lMdsShr @LIBS@ @LIBM@
+LIBS=-L@MAKESHLIBDIR@  -lTreeShr -lMdsShr @LIBS@ @LIBM@ @SOCKETLIB@
 SYBASE_INC=@SYBASE_INC@
 
 SOURCES = \
