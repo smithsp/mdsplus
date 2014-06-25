@@ -662,7 +662,7 @@ Message *ProcessMessage(Connection *c, Message *message) {
       fd = open(filename,fopts | O_BINARY | O_RANDOM,mode);
       if (fd == -1) {
 	int retry_open=0;
-	while (fd == -1 && ((ptr = index(filename,'\\')) != 0)) {
+	while (fd == -1 && ((ptr = strchr(filename,'\\')) != 0)) {
 	  retry_open=1;
 	  *ptr='/';
 	}
