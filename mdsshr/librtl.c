@@ -146,14 +146,7 @@ struct dirent *readdir(DIR *dir)
 	else
 		return 0;
 }
-/*
-char *index(char *str, char c)
-{
-	char match[2]={c,'\0'};
-	unsigned int pos = strcspn(str,match);
-  return (pos == 0) ? ((str[0] == c) ? str : 0) : ((pos == strlen(str)) ? 0 : &str[pos]);
-}
-*/
+
 STATIC_ROUTINE char *GetRegistry(char *where, char *pathname)
 {
   HKEY regkey=(HKEY)0;
@@ -2335,7 +2328,7 @@ STATIC_ROUTINE int FindFileStart(struct descriptor *filespec, FindFileCtx **ctx,
   CSTRING_FROM_DESCRIPTOR(fspec, filespec)
 
   lctx->next_index = lctx->next_dir_index = 0;
-  colon = (char *)index(fspec, ':');
+  colon = strchr(fspec, ':');
   if (colon == 0) {
     lctx->env = 0;
     colon = fspec-1;
@@ -2379,7 +2372,7 @@ STATIC_ROUTINE int FindFileStart(struct descriptor *filespec, FindFileCtx **ctx,
 		  env = tmp;
       }
 	  free(env_sav);
-      for(semi=(char *)index(env, ';'); semi!= 0; num++, semi=(char *)index(semi+1, ';'));
+      for(semi=strchr(env, ';'); semi!= 0; num++, semi=strchr(semi+1, ';'));
       if (num > 0) {
 		  char *ptr;
 		  int i;
@@ -2387,7 +2380,7 @@ STATIC_ROUTINE int FindFileStart(struct descriptor *filespec, FindFileCtx **ctx,
 		  lctx->env_strs = (char **)malloc(num*sizeof(char *));
 		  for (ptr=env,i=0; i<num; i++) {
 			  char *cptr;
-			  int len = ((cptr= (char *)index(ptr, ';'))==(char *)0) ? (int)strlen(ptr) : cptr-ptr; 
+			  int len = ((cptr=strchr(ptr, ';'))==(char *)0) ? (int)strlen(ptr) : cptr-ptr; 
 			  lctx->env_strs[i] = strncpy(malloc(len+1),ptr,len);
 			  lctx->env_strs[i][len] = '\0';
 			  ptr=cptr+1;
