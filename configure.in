@@ -372,6 +372,42 @@ alpha*-dec-osf*) CFLAGS="$CFLAGS -pthread -ieee";
        SHARETYPE=".so";
        jni_inc_dir="/usr/include/java";
        jni_md_inc_dir="/usr/include/java/`uname -m`";;
+*mingw*)
+       CFLAGS="$CFLAGS -fpic -shared-libgcc -fno-strict-aliasing";
+       FORLD="$F77";
+       LD="gcc"
+       CFLAGS="$CFLAGS -m64"
+       LD="gcc -m64"
+       FFLAGS="$FFLAGS -m64"
+       FORLD="$F77 -m64"
+       D64="64"
+       MAKELIBDIR="\$(top_srcdir)/lib${D64}/"
+       MAKESHLIBDIR="\$(top_srcdir)/lib${D64}/"
+       MAKEBINDIR="\$(top_srcdir)/bin${D64}/"
+       if (test "$F77" = "g77"); then
+         FFLAGS="$FFLAGS -Wno-globals"
+         LOC="%loc"
+       elif (test "$F77" = "gfortran"); then
+         FFLAGS="$FFLAGS -fno-range-check"
+         LOC="loc"
+       elif (($F77 --version | grep 'GNU Fortran') >/dev/null 2>&1); then
+         FFLAGS="$FFLAGS -fno-range-check"
+         LOC="loc"
+       fi
+       FOR_LDFLAGS="-lg2c"
+       FFLAGS="$FFLAGS -fpic -fno-backslash";
+       LDSHARE="-Wl,-Bdynamic ";
+       LDARC="-Wl,-Bstatic ";
+       LD_LDSHARE="-Bdynamic ";
+       LD_LDARC="-Bstatic ";
+       LINKSHARED="-shared ";
+       FOR_LINKSHARED="$LINKSHARED";
+       LIBPATH="LD_LIBRARY_PATH";
+       FOR_LDFLAGS="";
+       FEXECLIBDIR="-L";
+       SHARETYPE=".dll";
+       TAR_EXCLUDE="--exclude";;
+
 *86*linux*)
        CFLAGS="$CFLAGS -fpic -shared-libgcc -fno-strict-aliasing";
        FORLD="$F77";
