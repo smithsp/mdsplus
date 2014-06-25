@@ -16,7 +16,7 @@ STATIC_THREADSAFE pthread_once_t buffer_key_once = PTHREAD_ONCE_INIT;
 
 STATIC_ROUTINE void buffer_key_alloc();
 
-#ifdef HAVE_WINDOWS_H
+#ifndef HAVE_PTHREAD_KEY_CREATE
 
 void pthread_once(pthread_once_t *one_time,void (*key_alloc)())
 {
@@ -38,6 +38,8 @@ void pthread_setspecific(pthread_key_t buffer_key, void *p)
 }
 
 void pthread_key_create(pthread_key_t *buffer_key,void *d2){*buffer_key=TlsAlloc();}
+#else
+#include <pthread.h>
 #endif
 #ifdef HAVE_VXWORKS_H
 #define HANDLE void*
