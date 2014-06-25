@@ -50,9 +50,6 @@ static int udpPort = -1;
 static int getPortMutex_initialized = 0;
 static int eventTopIdx = 0; 
 static void *eventInfos[MAX_EVENTS];
-static int getPortMutex_initialized = 0;
-static int eventTopIdx = 0; 
-static void *eventInfos[MAX_EVENTS];
 
 #ifndef HAVE_PTHREAD_H
 static unsigned long *eventIdMutex;
@@ -95,7 +92,7 @@ extern int pthread_create(pthread_t  *thread, void *dummy, void (*rtn)(void *), 
 extern void pthread_detach(HANDLE *thread);
 #endif
 
-#ifdef HAVE_WINDOWS_H
+#ifndef HAVE_PTHREAD_H
 static void handleMessage(void *arg)
 #else
 static void *handleMessage(void *arg)
@@ -129,10 +126,10 @@ static void *handleMessage(void *arg)
 			(struct sockaddr *)&clientAddr, (socklen_t *)&addrSize)) < 0)
 #endif
 #endif
-    	{
-			perror("Error receiving UDP messages\n");
-			continue;
-        }
+    	        {
+		  perror("Error receiving UDP messages\n");
+		  continue;
+                }
     	
 		if (recBytes < (int)(sizeof(int)*2+thisNameLen))
 		  continue;
@@ -151,6 +148,9 @@ static void *handleMessage(void *arg)
 		  continue;
 		eventInfo->astadr(eventInfo->arg, bufLen, currPtr);
 	}
+#ifdef HAVE_PTHREAD_H
+	return 0;
+#endif
 }
 
 static void initialize()
