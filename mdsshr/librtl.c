@@ -310,6 +310,7 @@ void *LibCallg(void **arglist, void * (*routine)())
 }
 #endif
 
+#ifndef HAVE_WINDOWS_H
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -344,6 +345,7 @@ void *dlsym(void *handle, char *name)
 
 #else 
 #error "No supported dynamic library API"
+#endif
 #endif
 
 STATIC_ROUTINE char *nonblank( char *p)
