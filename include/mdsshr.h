@@ -51,66 +51,28 @@ EXPORT extern void MdsFloatToDelta(double floatTime, uint64_t *outTime);
 EXPORT extern void MdsTimeToFloat(uint64_t inTime, float *outFloat);
 EXPORT extern void MdsTimeToDouble(uint64_t inTime, double *outFloat);
 EXPORT extern int MdsPutEnv(char *cmd);
+EXPORT extern void MdsGlobalLock();
+EXPORT extern void MdsGlobalUnlock();
 
 #if defined HAVE_WINDOWS_H && !defined HAVE_PTHREAD_H
 typedef int pthread_key_t;
 typedef void *pthread_t;
 
-#ifndef HAVE_PTHREAD_ONCE
 EXPORT extern void pthread_once(int *one_time,void (*key_alloc));
-#endif
-#ifndef HAVE_PTHREAD_GETSPECIFIC
 EXPORT extern void *pthread_getspecific(pthread_key_t buffer_key);
-#endif
-#ifndef HAVE_PTHREAD_SETSPECIFIC
 EXPORT extern void pthread_setspecific(pthread_key_t  buffer_key, void *p);
-#endif
-#ifndef HAVE_PTHREAD_KEY_CREATE
 EXPORT extern void pthread_key_create(pthread_key_t *buffer_key,void *d2);
-#endif
-#ifndef HAVE_PTHREAD_MUTEX_LOCK
 EXPORT extern int pthread_mutex_lock(void **mutex);
-#endif
-#ifndef HAVE_PTHREAD_MUTEX_UNLOCK
 EXPORT extern int pthread_mutex_unlock(void **mutex);
-#endif
-#ifndef HAVE_PTHREAD_MUTEX_INIT
 EXPORT extern int pthread_mutex_init(void **mutex, void *);
-#endif
-#ifndef HAVE_PTHREAD_CLEANUP_POP
 EXPORT extern void pthread_cleanup_pop();
-#endif
-#ifndef HAVE_PTHREAD_CLEANUP_PUSH
 EXPORT extern void pthread_cleanup_push();
-#endif
-#ifndef HAVE_PTHREAD_COND_INIT
 EXPORT extern int pthread_cond_init(void **cond,void *def);
-#endif
-#ifndef HAVE_PTHREAD_COND_WAIT
 EXPORT extern int pthread_cond_wait(void **cond, void **mutex);
-#endif
-#ifndef HAVE_PTHREAD_CREATE
 EXPORT extern int pthread_create(pthread_t *thread, void *dummy, void *(*rtn)(void *), void *rtn_param);
-#endif
-#ifndef HAVE_PTHREAD_LOCK_GLOBAL_NP
-EXPORT extern void pthread_lock_global_np();
-#endif
-#ifndef HAVE_PTHREAD_UNLOCK_GLOBAL_NP
-EXPORT extern void pthread_unlock_global_np();
-#endif
-#ifndef HAVE_PTHREAD_COND_SIGNAL
 EXPORT extern int pthread_cond_signal(void *cond);
-#endif
-#ifndef HAVE_PTHREAD_COND_TIMEDWAIT
 EXPORT extern int pthread_cond_timedwait(void **cond, void **mutex, int msec);
-#endif
-#ifndef HAVE_PTHREAD_COND_DESTROY
 EXPORT extern int pthread_cond_destroy(void **cond);
-#endif
-#ifndef HAVE_PTHREAD_MUTEX_DESTROY
 EXPORT extern int pthread_mutex_destroy(void **mutex);
-#endif
-#ifndef HAVE_PTHREAD_CANCEL
 EXPORT extern void pthread_cancel(void *thread);
-#endif
 #endif
