@@ -282,7 +282,7 @@ UILCMD="uil"
 CC_LDFLAGS=""
 FOR_LDFLAGS=""
 
-LIBPTHREAD=-pthread
+LIBPTHREAD=-lpthread
 IS_HP=0
 MITDEVICESIO_TARGETS=""
 case "$host" in
@@ -373,6 +373,8 @@ alpha*-dec-osf*) CFLAGS="$CFLAGS -pthread -ieee";
        jni_inc_dir="/usr/include/java";
        jni_md_inc_dir="/usr/include/java/`uname -m`";;
 *mingw*)
+       LIBPTHREAD=-pthread
+       SOCKETLIB="-lws2_32"
        CFLAGS="$CFLAGS -fpic -shared-libgcc -fno-strict-aliasing";
        FORLD="$F77";
        LD="gcc"
