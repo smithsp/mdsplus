@@ -1,7 +1,7 @@
 include @top_srcdir@/Makefile.inc
 
 CFLAGS=@CFLAGS@ @SRBINCLUDE@
-LIBS=-L@MAKESHLIBDIR@ -lMdsShr @LIBS@ @SRBLIB@
+LIBS=-L@MAKESHLIBDIR@ -lMdsShr @LIBS@ @SRBLIB@ @SOCKETLIB@
 
 SOURCES = \
 dummies.c \
