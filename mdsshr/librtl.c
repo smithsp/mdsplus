@@ -308,9 +308,8 @@ void *LibCallg(void **arglist, void * (*routine)())
   }
   return 0;
 }
-#endif
+#else
 
-#ifndef HAVE_WINDOWS_H
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
