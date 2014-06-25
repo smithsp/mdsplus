@@ -7189,7 +7189,7 @@ alpha*-dec-osf*) CFLAGS="$CFLAGS -pthread -ieee";
        LIBPATH="LD_LIBRARY_PATH";
        FOR_LDFLAGS="";
        FEXECLIBDIR="-L";
-       SHARETYPE=".dll";
+       SHARETYPE=".dll.a";
        TAR_EXCLUDE="--exclude";;
 
 *86*linux*)
