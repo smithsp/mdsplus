@@ -147,6 +147,13 @@ struct dirent *readdir(DIR *dir)
 		return 0;
 }
 
+char *index(char *str, char c)
+{
+	char match[2]={c,'\0'};
+	unsigned int pos = strcspn(str,match);
+  return (pos == 0) ? ((str[0] == c) ? str : 0) : ((pos == strlen(str)) ? 0 : &str[pos]);
+}
+
 STATIC_ROUTINE char *GetRegistry(char *where, char *pathname)
 {
   HKEY regkey=(HKEY)0;
@@ -308,7 +315,131 @@ void *LibCallg(void **arglist, void * (*routine)())
   }
   return 0;
 }
-#else
+
+
+#else /* WIN32 */
+#ifdef HAVE_VXWORKS_H
+
+#include <vxWorks.h>
+#include <wdLib.h>
+#include <semLib.h>
+#include <taskLib.h>
+#include <ioLib.h>
+#include <dirent.h>
+
+int pthread_mutex_init(SEM_ID *mutex);
+void pthread_mutex_lock(SEM_ID *mutex);
+void pthread_mutex_unlock(SEM_ID *mutex);
+
+
+void pthread_detach(int *thread)
+{
+	return;
+}
+
+int pthread_cond_init(SEM_ID *cond)
+{
+  *cond = semBCreate(SEM_Q_FIFO, SEM_EMPTY);
+  return (*cond ==NULL);
+}
+
+BOOL pthread_cond_destroy(SEM_ID *cond)
+{
+  int status = semDelete(*cond);
+  return (status == ERROR);
+}
+
+int pthread_cond_signal(SEM_ID *cond)
+{
+  int status;
+  status = semGive(*cond);
+  status = semTake(*cond, WAIT_FOREVER);
+  return (status == ERROR);
+}
+
+
+
+int pthread_cond_wait(SEM_ID *cond)
+{
+  int status;
+  status = semTake(*cond, WAIT_FOREVER);
+  if(status != ERROR)
+    status = semGive(*cond);
+  return (status == ERROR);
+}
+
+void pthread_cond_timedwait(SEM_ID *cond, int msec)
+{
+  STATUS status;
+  status = semTake(*cond, (sysClkRateGet() * msec) / 1000);
+  if(status != ERROR)
+    status = semGive(*cond);
+}
+
+int pthread_mutex_init(SEM_ID *mutex)
+{
+  *mutex = semBCreate(SEM_Q_FIFO, SEM_FULL);
+  return (*mutex == NULL);
+}
+
+BOOL pthread_mutex_destroy(SEM_ID *mutex)
+{
+  return (semDelete(*mutex) != ERROR);
+}
+
+STATIC_THREADSAFE SEM_ID global_mutex = NULL;
+STATIC_THREADSAFE int global_mutex_initialized = 0;
+void pthread_unlock_global_np()
+{
+  if (!global_mutex_initialized)
+  {
+    global_mutex_initialized = 1;
+    pthread_mutex_init(&global_mutex);
+  }
+  pthread_mutex_unlock(&global_mutex);
+
+}
+void pthread_lock_global_np()
+{
+  if (!global_mutex_initialized)
+  {
+    global_mutex_initialized = 1;
+    pthread_mutex_init(&global_mutex);
+  }
+  pthread_mutex_lock(&global_mutex);
+}
+
+int pthread_exit(int status)
+{
+	return status;
+}
+
+int pthread_create(unsigned long *thread, void *dummy, void (*rtn)(void *), void *rtn_param)
+{
+  *thread = taskSpawn(NULL, 90, 0, 20000, (FUNCPTR)rtn, (int)rtn_param, 0,0,0,0,0,0,0,0,0);
+  return (*thread == ERROR);
+}
+
+void pthread_cleanup_pop(){}
+void pthread_cleanup_push(){}
+
+void pthread_mutex_lock(SEM_ID *mutex)
+{
+  semTake(*mutex, WAIT_FOREVER);
+}
+
+void pthread_mutex_unlock(SEM_ID *mutex)
+{
+  semGive(*mutex);
+}
+
+
+void pthread_cancel(unsigned long *thread)
+{
+  taskDelete(*thread);
+}
+
+#else /* VXWORKS */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -321,6 +452,79 @@ void *LibCallg(void **arglist, void * (*routine)())
 
 #ifdef _AIX
 #define pthread_mutexattr_default NULL
+#endif
+
+#ifndef HAVE_PTHREAD_LOCK_GLOBAL_NP
+#include <inttypes.h>
+#include <pthread.h>
+STATIC_THREADSAFE pthread_mutex_t GlobalMutex;
+STATIC_THREADSAFE int Initialized = 0;
+STATIC_THREADSAFE int LockCount = 0;
+#if (defined(_DECTHREADS_) && (_DECTHREADS_ != 1)) || !defined(_DECTHREADS_)
+#define pthread_attr_default NULL
+#define pthread_mutexattr_default NULL
+#define pthread_condattr_default NULL
+#else
+#undef select
+#endif
+STATIC_THREADSAFE pthread_t current_locked_thread = 0;
+
+void pthread_lock_global_np()
+{
+  pthread_t thread = pthread_self();
+  if (!Initialized)
+  {
+#if !defined(PTHREAD_MUTEX_RECURSIVE)
+#define PTHREAD_MUTEX_RECURSIVE PTHREAD_MUTEX_RECURSIVE_NP
+#endif
+
+    pthread_mutexattr_t m_attr;
+    pthread_mutexattr_init(&m_attr);
+#ifndef __sun
+    pthread_mutexattr_settype(&m_attr,PTHREAD_MUTEX_RECURSIVE);
+#endif
+    pthread_mutex_init(&GlobalMutex,&m_attr);
+    Initialized = 1;
+  }
+#ifdef ___DEBUG_IT
+  if (current_locked_thread)
+    printf("global currently locked by thread %d\n",current_locked_thread);
+
+  printf("Thread %d is about to lock global\n",thread);
+#endif
+  pthread_mutex_lock(&GlobalMutex);
+#ifdef ___DEBUG_IT
+  printf("Global locked - %d\n",++LockCount);
+  current_locked_thread = thread;
+#endif
+}
+
+void pthread_unlock_global_np()
+{
+  if (!Initialized)
+  { 
+#ifndef __sun
+#if defined(PTHREAD_MUTEX_RECURSIVE) 
+    pthread_mutexattr_t m_attr;
+    pthread_mutexattr_init(&m_attr);
+    pthread_mutexattr_settype(&m_attr,PTHREAD_MUTEX_RECURSIVE);       
+    pthread_mutex_init(&GlobalMutex,&m_attr);
+#else 
+    pthread_mutex_init(&GlobalMutex,pthread_mutexattr_default);
+#endif
+#endif
+    Initialized = 1;
+  }
+#ifdef ___DEBUG_IT
+  printf("Thread %d is about to unlock global - %d\n",pthread_self(),LockCount--);
+#endif
+  pthread_mutex_unlock(&GlobalMutex);
+#ifdef ___DEBUG_IT
+  printf("Unlocked global - %d\n",LockCount);
+  if (LockCount == 0)
+    current_locked_thread = 0;
+#endif
+}
 #endif
 
 #ifdef HAVE_DL_H
@@ -345,6 +549,7 @@ void *dlsym(void *handle, char *name)
 #else 
 #error "No supported dynamic library API"
 #endif
+
 #endif
 
 STATIC_ROUTINE char *nonblank( char *p)
@@ -582,6 +787,8 @@ int LibWait(float *secs)
 
   return 1;
 }
+
+#endif
 
 #endif
 
@@ -1278,9 +1485,6 @@ int LibConvertDateString(char *asc_time, int64_t *qtime)
 int LibTimeToVMSTime(time_t *time_in,int64_t *time_out) {
   time_t t;
 #ifdef HAVE_GETTIMEOFDAY
-#ifdef HAVE_WINDOWS_H
-  typedef long suseconds_t;
-#endif
   struct timeval tm;
   suseconds_t microseconds=0;
   if (time_in == NULL) {
@@ -1931,7 +2135,7 @@ STATIC_ROUTINE int FindFileStart(struct descriptor *filespec, FindFileCtx **ctx,
   CSTRING_FROM_DESCRIPTOR(fspec, filespec)
 
   lctx->next_index = lctx->next_dir_index = 0;
-  colon = strchr(fspec, ':');
+  colon = (char *)index(fspec, ':');
   if (colon == 0) {
     lctx->env = 0;
     colon = fspec-1;
@@ -1975,7 +2179,7 @@ STATIC_ROUTINE int FindFileStart(struct descriptor *filespec, FindFileCtx **ctx,
 		  env = tmp;
       }
 	  free(env_sav);
-      for(semi=strchr(env, ';'); semi!= 0; num++, semi=strchr(semi+1, ';'));
+      for(semi=(char *)index(env, ';'); semi!= 0; num++, semi=(char *)index(semi+1, ';'));
       if (num > 0) {
 		  char *ptr;
 		  int i;
@@ -1983,7 +2187,7 @@ STATIC_ROUTINE int FindFileStart(struct descriptor *filespec, FindFileCtx **ctx,
 		  lctx->env_strs = (char **)malloc(num*sizeof(char *));
 		  for (ptr=env,i=0; i<num; i++) {
 			  char *cptr;
-			  int len = ((cptr=strchr(ptr, ';'))==(char *)0) ? (int)strlen(ptr) : cptr-ptr; 
+			  int len = ((cptr= (char *)index(ptr, ';'))==(char *)0) ? (int)strlen(ptr) : cptr-ptr; 
 			  lctx->env_strs[i] = strncpy(malloc(len+1),ptr,len);
 			  lctx->env_strs[i][len] = '\0';
 			  ptr=cptr+1;
