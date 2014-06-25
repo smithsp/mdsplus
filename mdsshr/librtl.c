@@ -330,7 +330,6 @@ void *LibCallg(void **arglist, FARPROC *routine)
   return retval;
 }
 */
-#define ETIMEDOUT 42
 
 #ifndef HAVE_PTHREAD_DETACH
 void pthread_detach(HANDLE *thread)
@@ -392,6 +391,7 @@ int pthread_cond_wait(HANDLE *cond, HANDLE *mutex)
 #endif
 
 #ifndef HAVE_PTHREAD_COND_TIMEDWAIT
+#define ETIMEDOUT 138
 int pthread_cond_timedwait(HANDLE *cond, HANDLE *mutex, int msec)
 {
    int status;
