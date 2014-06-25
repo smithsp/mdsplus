@@ -282,7 +282,7 @@ UILCMD="uil"
 CC_LDFLAGS=""
 FOR_LDFLAGS=""
 
-LIBPTHREAD=-lpthread
+LIBPTHREAD=-pthread
 IS_HP=0
 MITDEVICESIO_TARGETS=""
 case "$host" in
