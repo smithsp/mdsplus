@@ -1,8 +1,4 @@
-#ifndef HAVE_VXWORKS_H
 #include <config.h>
-#else
-#define NULL 0
-#endif
 #include <STATICdef.h>
 #include <mdsshr.h>
 #include "mdsshrthreadsafe.h"
@@ -16,7 +12,7 @@ STATIC_THREADSAFE pthread_once_t buffer_key_once = PTHREAD_ONCE_INIT;
 
 STATIC_ROUTINE void buffer_key_alloc();
 
-#ifndef HAVE_PTHREAD_KEY_CREATE
+#if defined HAVE_WINDOWS_H && !defined HAVE_PTHREAD_H
 
 void pthread_once(pthread_once_t *one_time,void (*key_alloc)())
 {
@@ -38,8 +34,6 @@ void pthread_setspecific(pthread_key_t buffer_key, void *p)
 }
 
 void pthread_key_create(pthread_key_t *buffer_key,void *d2){*buffer_key=TlsAlloc();}
-#else
-#include <pthread.h>
 #endif
 #ifdef HAVE_VXWORKS_H
 #define HANDLE void*

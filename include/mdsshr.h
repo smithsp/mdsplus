@@ -1,28 +1,5 @@
-#ifdef __VMS
-#define MdsCOMPRESSIBLE MDS$_COMPRESSIBLE
-#define MdsGet1Dx MDS$GET1_DX
-#define MdsGet1DxS MDS$GET1_DX_S
-#define MdsGet1DxA Mds$GET1_DX_A
-#define MdsFree1Dx MDS$FREE1_DX
-#define MdsXpand MDS$XPAND
-#define MdsCopyDxXd MDS$COPY_DXXD
-#define MdsPk MDS$PK
-#define MdsUnpk MDS$UNPK
-#define MdsCmprs MDS$CMPRS
-
-#define MdsGetCurrentShotid MDS$GET_CURRENT_SHOTID
-#pragma EXPORT extern_model save
-#pragma EXPORT extern_model globalvalue
-EXPORT extern MdsCOMPRESSIBLE;
-#pragma EXPORT extern_model restore
-#else
 #define MdsCOMPRESSIBLE 3
-#endif
-#ifndef HAVE_VXWORKS_H
 #include <config.h>
-#else
-#define EXPORT
-#endif
 #include <mdsdescrip.h>
 #include <mdstypes.h>
 EXPORT extern int MdsCmprs(int *nitems, struct descriptor_a *items, struct descriptor_a *pack, int *bit);
@@ -75,10 +52,10 @@ EXPORT extern void MdsTimeToFloat(uint64_t inTime, float *outFloat);
 EXPORT extern void MdsTimeToDouble(uint64_t inTime, double *outFloat);
 EXPORT extern int MdsPutEnv(char *cmd);
 
-#ifdef HAVE_WINDOWS_H
-#ifndef HAVE_PTHREAD_COND_INIT
+#if defined HAVE_WINDOWS_H && !defined HAVE_PTHREAD_H
 typedef int pthread_key_t;
 typedef void *pthread_t;
+
 #ifndef HAVE_PTHREAD_ONCE
 EXPORT extern void pthread_once(int *one_time,void (*key_alloc));
 #endif
@@ -135,6 +112,5 @@ EXPORT extern int pthread_mutex_destroy(void **mutex);
 #endif
 #ifndef HAVE_PTHREAD_CANCEL
 EXPORT extern void pthread_cancel(void *thread);
-#endif
 #endif
 #endif
