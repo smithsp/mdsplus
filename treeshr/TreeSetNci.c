@@ -701,7 +701,7 @@ static int SetNodeParentState(PINO_DATABASE *db, NODE *node, NCI *nci, unsigned 
   }
   return status;
 }
-#if defined HAVE_WINDOWS_H && !define HAVE_PTHREAD_H
+#if defined HAVE_WINDOWS_H && !defined HAVE_PTHREAD_H
 #define pthread_mutex_t int
 static void LockMdsShrMutex(){}
 static void UnlockMdsShrMutex(){}
