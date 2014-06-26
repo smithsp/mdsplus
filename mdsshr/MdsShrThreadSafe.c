@@ -312,7 +312,7 @@ void MdsGlobalUnlock()
   pthread_mutex_unlock(&global_mutex);
 
 }
-void MDSGlobalLockp()
+void MdsGlobalLock()
 {
   if (!global_mutex_initialized)
   {
