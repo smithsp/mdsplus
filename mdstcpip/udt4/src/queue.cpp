@@ -510,7 +510,7 @@ void CSndQueue::init(CChannel* c, CTimer* t)
    #endif
 }
 
-#ifndef WIN32
+#if !defined WIN32 || defined __MINGW64__
    void* CSndQueue::worker(void* param)
 #else
    DWORD WINAPI CSndQueue::worker(LPVOID param)
