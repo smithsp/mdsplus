@@ -9,6 +9,7 @@ EXPORT extern int MdsCopyDxXd(struct descriptor *in, struct descriptor_xd *out);
 EXPORT extern int MdsCopyDxXdZ(struct descriptor *in, struct descriptor_xd *out, void **zone, int (*fixup_nid) (), void *fixup_nid_arg,
                         int (*fixup_path) (), void *fixup_path_arg);
 EXPORT extern char *MdsDescrToCstring(struct descriptor *);
+EXPORT extern int  MDSfprintf( FILE *fp , char *fmt , ... );
 EXPORT extern void MdsFree(void *);
 EXPORT extern int MdsGet1Dx(unsigned int *len, unsigned char *dtype, struct descriptor_xd *dsc, void **zone);
 EXPORT extern int MdsGet1DxA(struct descriptor_a * in, unsigned short *len, unsigned char *dtype, struct descriptor_xd *out);
