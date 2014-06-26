@@ -24,9 +24,13 @@ typedef int socklen_t;
 #define close closesocket
 #include <process.h>
 #define getpid _getpid
+#ifdef HAVE_PTHREAD_H
+#include <pthread.h>
+#else
 extern int pthread_mutex_init();
 extern int pthread_mutex_lock();
 extern int pthread_mutex_unlock();
+#endif
 #else
 #define FIONREAD_TYPE int
 #include <sys/socket.h>

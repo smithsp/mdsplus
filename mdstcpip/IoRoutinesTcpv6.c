@@ -16,6 +16,9 @@
 #endif
 #ifdef HAVE_WINDOWS_H
 typedef int socklen_t;
+#define ioctl ioctlsocket
+#define FIONREAD_TYPE u_long
+#define ioctl ioctl
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #define snprintf _snprintf
@@ -24,9 +27,13 @@ typedef int socklen_t;
 #define close closesocket
 #include <process.h>
 #define getpid _getpid
+#ifdef HAVE_PTHREAD_H
+#include <pthread.h>
+#else
 extern int pthread_mutex_init();
 extern int pthread_mutex_lock();
 extern int pthread_mutex_unlock();
+#endif
 #else
 #include <sys/socket.h>
 #include <netdb.h>
