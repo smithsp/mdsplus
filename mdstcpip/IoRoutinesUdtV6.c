@@ -15,6 +15,7 @@
 #include <sys/filio.h>
 #endif
 #ifdef HAVE_WINDOWS_H
+#include <ws2tcpip.h>
 #include<winsock2.h>
 #include<Ws2tcpip.h>
 #include "udtc.h"
