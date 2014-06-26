@@ -488,7 +488,7 @@ VOID CALLBACK ShutdownEvent(PVOID arg,BOOLEAN fired) {
   exit(0);
 }
 
-int GetSocketHandle(char *name) {
+static int getSocketHandle(char *name) {
   char logfile[1024];
   HANDLE h;
   int ppid;
@@ -654,7 +654,7 @@ static int tcp_listen(int argc, char **argv) {
     }
   } else {
 #ifdef HAVE_WINDOWS_H
-    int sock=GetSocketHandle(options[1].value);
+    int sock=getSocketHandle(options[1].value);
 #else
     int sock=0;
 #endif
