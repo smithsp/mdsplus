@@ -1,3 +1,4 @@
+#include <mdstypes.h>
 #include <mdsdescrip.h>
 #include "mdsdcl.h"
 #ifdef HAVE_WINDOWS_H
