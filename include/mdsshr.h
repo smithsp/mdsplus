@@ -2,6 +2,7 @@
 #include <config.h>
 #include <mdsdescrip.h>
 #include <mdstypes.h>
+#include <stdio.h>
 EXPORT extern int MdsCmprs(int *nitems, struct descriptor_a *items, struct descriptor_a *pack, int *bit);
 EXPORT extern int MdsCompress(struct descriptor *cimage, struct descriptor *centry, struct descriptor *in, struct descriptor_xd *out);
 EXPORT extern int MdsDecompress(struct descriptor_r *rec_ptr, struct descriptor_xd *out_ptr);
