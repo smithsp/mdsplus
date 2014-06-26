@@ -324,7 +324,7 @@ CGuard::CGuard(pthread_mutex_t& lock):
 m_Mutex(lock),
 m_iLocked()
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       m_iLocked = pthread_mutex_lock(&m_Mutex);
    #else
       m_iLocked = WaitForSingleObject(m_Mutex, INFINITE);
@@ -334,7 +334,7 @@ m_iLocked()
 // Automatically unlock in destructor
 CGuard::~CGuard()
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       if (0 == m_iLocked)
          pthread_mutex_unlock(&m_Mutex);
    #else
@@ -345,7 +345,7 @@ CGuard::~CGuard()
 
 void CGuard::enterCS(pthread_mutex_t& lock)
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       pthread_mutex_lock(&lock);
    #else
       WaitForSingleObject(lock, INFINITE);
@@ -354,7 +354,7 @@ void CGuard::enterCS(pthread_mutex_t& lock)
 
 void CGuard::leaveCS(pthread_mutex_t& lock)
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       pthread_mutex_unlock(&lock);
    #else
       ReleaseMutex(lock);
@@ -363,7 +363,7 @@ void CGuard::leaveCS(pthread_mutex_t& lock)
 
 void CGuard::createMutex(pthread_mutex_t& lock)
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       pthread_mutex_init(&lock, NULL);
    #else
       lock = CreateMutex(NULL, false, NULL);
@@ -372,7 +372,7 @@ void CGuard::createMutex(pthread_mutex_t& lock)
 
 void CGuard::releaseMutex(pthread_mutex_t& lock)
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       pthread_mutex_destroy(&lock);
    #else
       CloseHandle(lock);
@@ -381,7 +381,7 @@ void CGuard::releaseMutex(pthread_mutex_t& lock)
 
 void CGuard::createCond(pthread_cond_t& cond)
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       pthread_cond_init(&cond, NULL);
    #else
       cond = CreateEvent(NULL, false, false, NULL);
@@ -390,7 +390,7 @@ void CGuard::createCond(pthread_cond_t& cond)
 
 void CGuard::releaseCond(pthread_cond_t& cond)
 {
-   #if !defined WIN32 || defined __MING64__
+   #if !defined WIN32 || defined __MINGW64__
       pthread_cond_destroy(&cond);
    #else
       CloseHandle(cond);
