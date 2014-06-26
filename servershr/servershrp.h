@@ -3,7 +3,11 @@
 #include <config.h>
 #ifdef HAVE_WINDOWS_H
 #include <windows.h>
+#ifdef HAVE_PTHREAD_H
+#include <pthread.h>
+#else
 typedef void *pthread_t;
+#endif
 #define close closesocket
 #else
 #include <pthread.h>
