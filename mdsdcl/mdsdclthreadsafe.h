@@ -1,9 +1,6 @@
 #include <config.h>
-#ifndef __MINGW64__
 #include <mdstypes.h>
-#endif
 #include <mdsdescrip.h>
-#include "mdsdcl.h"
 
 #if HAVE_PTHREAD_H
 #include <pthread.h>
@@ -17,6 +14,7 @@
 #define PTHREAD_ONCE_INIT 0
 #endif
 #endif
+#include "mdsdcl.h"
 
 typedef struct _thread_static {
   struct _mdsdcl_ctrl  ctrl;
