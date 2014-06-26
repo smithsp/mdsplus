@@ -6,9 +6,9 @@ COMPRESSION_OBJECTS = $(COMPRESSION_SOURCES:.c=.o)
 
 COMPRESSION_SWITCH=
 
-CFLAGS=@CFLAGS@ $(COMPRESSION_SWITCH)
+CFLAGS=@CFLAGS@ $(COMPRESSION_SWITCH) -Iudt4/src -Iudt4/udtc
 
-CXXFLAGS=-Wno-deprecated -fPIC -finline-functions -fno-strict-aliasing @CFLAGS@ 
+CXXFLAGS=-Wno-deprecated -fPIC -finline-functions -fno-strict-aliasing -Iudt4/src -Iudt4/udtc @CFLAGS@ 
 LIBS=@LIBS@ @LIBSOCKET@ @LIBNSL@ @LIBRESOLV@ @MEMCHKLIB@ @SOCKETLIB@
 
 MdsIpShr    = @MAKESHLIBDIR@libMdsIpShr@SHARETYPE@

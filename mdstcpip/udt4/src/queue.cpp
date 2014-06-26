@@ -966,7 +966,7 @@ void CRcvQueue::init(int qsize, int payload, int version, int hsize, CChannel* c
    #endif
 }
 
-#ifndef WIN32
+#if !defined WIN32 || defined __MINGW64__
    void* CRcvQueue::worker(void* param)
 #else
    DWORD WINAPI CRcvQueue::worker(LPVOID param)
