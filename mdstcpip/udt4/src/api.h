@@ -214,7 +214,7 @@ private:
 
 private:
    pthread_key_t m_TLSError;                         // thread local error record (last error)
-   #ifndef WIN32
+   #if !defined WIN32 || defined __MINGW64__
       static void TLSDestroy(void* e) {if (NULL != e) delete (CUDTException*)e;}
    #else
       std::map<DWORD, CUDTException*> m_mTLSRecord;

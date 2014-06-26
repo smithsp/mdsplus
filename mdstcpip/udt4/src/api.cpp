@@ -230,7 +230,7 @@ int CUDTUnited::cleanup()
       return 0;
 
    m_bClosing = true;
-   #if !defined WIN32 || defined __MINGW__
+   #if !defined WIN32 || defined __MINGW64__
       pthread_cond_signal(&m_GCStopCond);
       pthread_join(m_GCThread, NULL);
       pthread_mutex_destroy(&m_GCStopLock);
@@ -1463,7 +1463,7 @@ void CUDTUnited::updateMux(CUDTSocket* s, const CUDTSocket* ls)
    }
 }
 
-#ifndef WIN32
+#if !defined WIN32 || defined __MINGW64__
    void* CUDTUnited::garbageCollect(void* p)
 #else
    DWORD WINAPI CUDTUnited::garbageCollect(LPVOID p)
