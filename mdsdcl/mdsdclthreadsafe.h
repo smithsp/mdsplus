@@ -1,4 +1,7 @@
+#include <config.h>
+#ifndef __MINGW64__
 #include <mdstypes.h>
+#endif
 #include <mdsdescrip.h>
 #include "mdsdcl.h"
 
