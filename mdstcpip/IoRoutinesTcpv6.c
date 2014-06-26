@@ -16,6 +16,8 @@
 #endif
 #ifdef HAVE_WINDOWS_H
 typedef int socklen_t;
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #define snprintf _snprintf
 #define MSG_DONTWAIT 0
 #include <io.h>
