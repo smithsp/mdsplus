@@ -1,7 +1,7 @@
 #ifndef THREAD_H_
 #define THREAD_H_
 #include "SystemSpecific.h"
-#ifdef HAVE_WINDOWS_H
+#if defined HAVE_WINDOWS_H && !defined HAVE_PTHREAD_H
 #include "WindowsThread.h"
 #else
 #include <pthread.h>
