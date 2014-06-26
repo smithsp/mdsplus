@@ -15,9 +15,16 @@
 #include <sys/filio.h>
 #endif
 #ifdef HAVE_WINDOWS_H
+#include <winsock2.h>
 #include <ws2tcpip.h>
-#include<winsock2.h>
-#include<Ws2tcpip.h>
+struct sockaddr_in6 {
+	short sin6_family;	/* AF_INET6 */
+	u_short sin6_port; 	/* transport layer port # */
+	u_long sin6_flowinfo;	/* IPv6 traffic class & flow info */
+	struct in6_addr sin6_addr;  /* IPv6 address */
+	u_long sin6_scope_id;	/* set of interfaces for a scope */
+};
+#define INET6_ADDRSTRLEN 46
 #include "udtc.h"
 typedef int socklen_t;
 #define snprintf _snprintf

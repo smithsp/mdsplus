@@ -16,6 +16,7 @@
 #endif
 #ifdef HAVE_WINDOWS_H
 #define ioctl ioctlsocket
+#define FIONREAD_TYPE u_long
 typedef int socklen_t;
 #define snprintf _snprintf
 #define MSG_DONTWAIT 0
@@ -27,6 +28,7 @@ extern int pthread_mutex_init();
 extern int pthread_mutex_lock();
 extern int pthread_mutex_unlock();
 #else
+#define FIONREAD_TYPE int
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -263,7 +265,7 @@ static int tcp_flush(int conid) {
 #if !defined(__sparc__)
     struct timeval timout = {0,1};
     int status;
-    int nbytes;
+    FIONREAD_TYPE nbytes;
     int tries = 0;
     char buffer[1000];
     fd_set readfds, writefds;
