@@ -5,11 +5,11 @@ inffast.c inflate.c inftrees.c infutil.c trees.c uncompr.c zutil.c
 COMPRESSION_OBJECTS = $(COMPRESSION_SOURCES:.c=.o)
 
 COMPRESSION_SWITCH=
-ifeq "@DO_UDT@" "yes"
+ifeq "@MINGW@" "yes"
+  UDT_INCLUDE =
+else
   UDT_INCLUDE = -Iudt4/src -Iudt4/udtc
   DO_UDT = yes
-else
-  UDT_INCLUDE =
 endif
 
 CFLAGS=@CFLAGS@ $(COMPRESSION_SWITCH)  $(UDT_INCLUDE)
