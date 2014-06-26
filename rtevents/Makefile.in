@@ -3,7 +3,7 @@ include @top_srcdir@/Makefile.inc
 LD=@CXX@
 CFLAGS=@CFLAGS@ @SRBINCLUDE@ -fPIC 
 CXXFLAGS=-g -O2 -Wno-deprecated -fPIC @CFLAGS@
-LIBS=-L@MAKESHLIBDIR@ @LIBS@ @SRBLIB@ -lMdsIpShr -lMdsShr
+LIBS=-L@MAKESHLIBDIR@ @LIBS@ @SRBLIB@ -lMdsIpShr -lMdsShr @SOCKETLIB@
 
 CXXSOURCES = \
 	AllocationManager.cpp EventManager.cpp RelativePointer.cpp Event.cpp\
