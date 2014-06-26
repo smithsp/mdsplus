@@ -18,7 +18,6 @@
 typedef int socklen_t;
 #define ioctl ioctlsocket
 #define FIONREAD_TYPE u_long
-#define ioctl ioctl
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #define snprintf _snprintf
