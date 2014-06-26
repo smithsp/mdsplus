@@ -5,15 +5,10 @@ inffast.c inflate.c inftrees.c infutil.c trees.c uncompr.c zutil.c
 COMPRESSION_OBJECTS = $(COMPRESSION_SOURCES:.c=.o)
 
 COMPRESSION_SWITCH=
-ifeq "@MINGW@" "yes"
-  MINGW_CFLAGS=-D_WIN32_WINNT=0x0501 -D__MINGW__
-else
-  MINGW_CFLAGS=
-endif
 
-CFLAGS=@CFLAGS@ $(COMPRESSION_SWITCH)  $(MINGW_CFLAGS)
+CFLAGS=@CFLAGS@ $(COMPRESSION_SWITCH)
 
-CXXFLAGS=-Wno-deprecated -fPIC -finline-functions -fno-strict-aliasing $(MINGW_CFLAGS) @CFLAGS@ 
+CXXFLAGS=-Wno-deprecated -fPIC -finline-functions -fno-strict-aliasing @CFLAGS@ 
 LIBS=@LIBS@ @LIBSOCKET@ @LIBNSL@ @LIBRESOLV@ @MEMCHKLIB@ @SOCKETLIB@
 
 MdsIpShr    = @MAKESHLIBDIR@libMdsIpShr@SHARETYPE@
