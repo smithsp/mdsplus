@@ -16,7 +16,7 @@ extern int TdiDebug();
 
 static char *cvsrev = "@(#)$RCSfile$ $Revision$ $Date$";
 
-#ifdef _WIN32
+#ifdef WIN32
 #define BlockSig(a)
 #define UnBlockSig(a)
 #define alloca _alloca
