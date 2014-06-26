@@ -54,6 +54,7 @@ written by
    #endif
    #ifdef __MINGW64__
       #include <pthread.h>
+      #include <sys/time.h>
    #endif
 #endif
 

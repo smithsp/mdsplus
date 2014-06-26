@@ -52,7 +52,7 @@ written by
       #include <wspiapi.h>
    #endif
    #ifdef __MINGW64__
-      include <pthread.h>
+      #include <pthread.h>
    #endif
 #endif
 #include <cmath>

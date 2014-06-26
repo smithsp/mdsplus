@@ -44,6 +44,9 @@ written by
    #ifdef LEGACY_WIN32
       #include <wspiapi.h>
    #endif
+   #ifdef __MINGW64__
+      #include <sys/time.h>
+   #endif
 #else
    #include <unistd.h>
 #endif
