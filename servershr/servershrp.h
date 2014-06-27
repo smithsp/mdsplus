@@ -7,8 +7,8 @@
 #include <pthread.h>
 #else
 typedef void *pthread_t;
-#endif
 #define close closesocket
+#endif
 #else
 #include <pthread.h>
 #ifndef HAVE_PTHREAD_LOCK_GLOBAL_NP
