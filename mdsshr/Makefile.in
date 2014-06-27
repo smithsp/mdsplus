@@ -9,9 +9,8 @@ else
 endif
 
 ifeq "@MINGW@" "yes"
-	IMPLIB=-Wl,--out-implib,MdsShr.dll.a
-else
-	IMPLIB=
+	IMPLIB=@MAKELIBDIR@MdsShr.dll.a
+	MAKE_IMPLIB=-Wl,--out-implib,$(IMPLIB)
 endif
 
 SOURCES = \
@@ -47,13 +46,19 @@ clean :
 	@ $(RM) $(OBJECTS)
 	@ $(RM) so_locations
 	@ $(RM) @MAKELIBDIR@libMdsShr.a 
-	@ $(RM) @MAKESHLIBDIR@libMdsShr@SHARETYPE@ 
+	@ $(RM) @MAKESHLIBDIR@libMdsShr@SHARETYPE@
+ifdef IMPLIB
+	@ $(RM) $(IMPLIB)
+endif
 
 install:
 	if [ ! -d @libdir@ ] ; then \
                 $(MKDIR_P) -m 755 @libdir@; \
         fi;
 	$(INSTALL) -m 755  @MAKESHLIBDIR@@LIBPRE@MdsShr@SHARETYPE@ @libdir@
+ifdef IMPLIB
+	$(INSTALL) -m 755 $(IMPLIB) @libdir@
+endif
 	if (test @SHARETYPE@ != .a) then \
 		$(INSTALL) -m 644  @MAKELIBDIR@@LIBPRE@MdsShr.a @libdir@; \
 	fi;
