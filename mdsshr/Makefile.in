@@ -9,7 +9,7 @@ else
 endif
 
 ifeq "@MINGW@" "yes"
-	IMPLIB=-W,l--out-implib,MdsShr.dll.a
+	IMPLIB=-Wl,--out-implib,MdsShr.dll.a
 else
 	IMPLIB=
 endif
