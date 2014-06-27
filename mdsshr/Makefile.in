@@ -8,6 +8,12 @@ else
 	MDSMALLOC = MdsMalloc.c
 endif
 
+ifeq "@MINGW@" "yes"
+	IMPLIB=-W,l--out-implib MdsShr.dll.a
+else
+	IMPLIB=
+endif
+
 SOURCES = \
         librtl.c \
         dasutil_routines4.c \
@@ -32,7 +38,7 @@ SOURCES = \
 OBJECTS = $(SOURCES:.c=.o)
 EXPORTS = MdsShr.exports
 
-all : @MAKELIBDIR@ @MAKESHLIBDIR@ @MAKESHLIBDIR@libMdsShr@SHARETYPE@ @MAKELIBDIR@libMdsShr.a
+all : @MAKELIBDIR@ @MAKESHLIBDIR@ @MAKESHLIBDIR@@LIBPRE@MdsShr@SHARETYPE@ @MAKELIBDIR@@LIBPRE@MdsShr.a
 
 depend:
 	@makedepend -- $(CFLAGS) -- $(SOURCES)
@@ -47,15 +53,15 @@ install:
 	if [ ! -d @libdir@ ] ; then \
                 $(MKDIR_P) -m 755 @libdir@; \
         fi;
-	$(INSTALL) -m 755  @MAKESHLIBDIR@libMdsShr@SHARETYPE@ @libdir@
+	$(INSTALL) -m 755  @MAKESHLIBDIR@@LIBPRE@MdsShr@SHARETYPE@ @libdir@
 	if (test @SHARETYPE@ != .a) then \
-		$(INSTALL) -m 644  @MAKELIBDIR@libMdsShr.a @libdir@; \
+		$(INSTALL) -m 644  @MAKELIBDIR@@LIBPRE@MdsShr.a @libdir@; \
 	fi;
 
-@MAKESHLIBDIR@libMdsShr@SHARETYPE@ : $(OBJECTS) @EXPORTS_FILE@
-	$(LD) -o $@ @LINKSHARED@ $(OBJECTS) $(LIBS) $(LDFLAGS)
+@MAKESHLIBDIR@@LIBPRE@MdsShr@SHARETYPE@ : $(OBJECTS) @EXPORTS_FILE@
+	$(LD) -o $@ @LINKSHARED@ $(OBJECTS) $(LIBS) $(LDFLAGS) $(IMPLIB)
 
-@MAKELIBDIR@libMdsShr.a : $(OBJECTS)
+@MAKELIBDIR@@LIBPRE@MdsShr.a : $(OBJECTS)
 	$(AR) -cr $@ $(OBJECTS)
 	@RANLIB@ $@
 

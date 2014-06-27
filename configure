@@ -695,6 +695,7 @@ LIBSOCKET
 LIBRESOLV
 LIBREADLINE
 LIBPTHREAD
+LIBPRE
 LIBPATH
 LIBNSL
 LIBM
@@ -7038,6 +7039,7 @@ IDL_LD=""
 MDSVME=""
 LOC="%loc"
 VAL="%val"
+LIBPRE="lib"
 
 CFLAGS="$CFLAGS $GCCPROF $MEMCHK -I\$(top_srcdir)/include"
 FFLAGS="$FFLAGS  -I\$(top_srcdir)/include"
@@ -7158,14 +7160,15 @@ alpha*-dec-osf*) CFLAGS="$CFLAGS -pthread -ieee";
        jni_md_inc_dir="/usr/include/java/`uname -m`";;
 *mingw*)
        MINGW="yes"
+       LIBPRE=""
        LIBPTHREAD=-pthread
        SOCKETLIB="-lws2_32"
        CFLAGS="$CFLAGS -fpic -shared-libgcc -fno-strict-aliasing";
        FORLD="$F77";
        LD="gcc"
-       CFLAGS="$CFLAGS -m64"
+       CFLAGS="$CFLAGS -m64 -mthreads"
        LD="gcc -m64"
-       FFLAGS="$FFLAGS -m64"
+       FFLAGS="$FFLAGS -m64 -mthreads"
        FORLD="$F77 -m64"
        D64="64"
        MAKELIBDIR="\$(top_srcdir)/lib${D64}/"
@@ -7192,7 +7195,7 @@ alpha*-dec-osf*) CFLAGS="$CFLAGS -pthread -ieee";
        LIBPATH="PATH";
        FOR_LDFLAGS="";
        FEXECLIBDIR="-L";
-       SHARETYPE=".dll.a";
+       SHARETYPE=".dll";
        TAR_EXCLUDE="--exclude";;
 
 *86*linux*)
@@ -15262,6 +15265,7 @@ fi
 
 
 LIBS="$LIBPTHREAD $LIBS"
+
 
 
 
