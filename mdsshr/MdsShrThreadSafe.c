@@ -200,7 +200,6 @@ void LockMdsShrMutex(pthread_mutex_t *mutex,int *initialized)
 #else
     pthread_mutex_init(mutex);
 #endif
-#endif
     *initialized = 1;
   }
 #ifndef _MSC_VER
