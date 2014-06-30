@@ -724,6 +724,7 @@ GLOBUS_LOCATION
 GLOBUS_LIBS
 GLOBUS_FLAVOR
 GLOBUS_CFLAGS
+GEN_DEVICE
 FOR_LINKSHARED
 FOR_LDFLAGS
 FORLD
@@ -7071,6 +7072,7 @@ MINGW="no"
 LIBPTHREAD=-lpthread
 IS_HP=0
 MITDEVICESIO_TARGETS=""
+GEN_DEVICE=gen_device
 case "$host" in
 hppa*) CFLAGS="$CFLAGS -O0 -g -fpic -D_XOPEN_SOURCE_EXTENDED";
        FFLAGS="$FFLAGS -O0 -g -fpic  -Wno-globals -fno-backslash";
@@ -7145,6 +7147,7 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
 *mingw*)
        MINGW="yes"
        LIBPRE=""
+       GEN_DEVICE=""
        LIBPTHREAD=-pthread
        SOCKETLIB="-lws2_32"
        CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing -mthreads";
@@ -15246,6 +15249,7 @@ fi
 
 
 LIBS="$LIBPTHREAD $LIBS"
+
 
 
 

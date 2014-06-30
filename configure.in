@@ -287,6 +287,7 @@ MINGW="no"
 LIBPTHREAD=-lpthread
 IS_HP=0
 MITDEVICESIO_TARGETS=""
+GEN_DEVICE=gen_device
 case "$host" in
 hppa*) CFLAGS="$CFLAGS -O0 -g -fpic -D_XOPEN_SOURCE_EXTENDED";
        FFLAGS="$FFLAGS -O0 -g -fpic  -Wno-globals -fno-backslash";
@@ -361,6 +362,7 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
 *mingw*)
        MINGW="yes"
        LIBPRE=""
+       GEN_DEVICE=""
        LIBPTHREAD=-pthread
        SOCKETLIB="-lws2_32"
        CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing -mthreads";
@@ -1014,6 +1016,7 @@ AC_SUBST(FEXECLIBDIR)
 AC_SUBST(FORLD)
 AC_SUBST(FOR_LDFLAGS)
 AC_SUBST(FOR_LINKSHARED)
+AC_SUBST(GEN_DEVICE)
 AC_SUBST(GLOBUS_CFLAGS)
 AC_SUBST(GLOBUS_FLAVOR)
 AC_SUBST(GLOBUS_LIBS)

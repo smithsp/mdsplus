@@ -22,12 +22,6 @@ HDF5_APS = hdf5
 
 D3D_PACKAGE = d3dshr
 
-ifeq "@MINGW@" "yes"
-  gen_device=
-else
-  getn_device=gen_device
-endif
-
 PARTS = \
         mdsshr \
         treeshr \
@@ -39,7 +33,7 @@ PARTS = \
         mdslibidl \
         cdu     \
         mdsdcl  \
-	$(gen_device) \
+	@GEN_DEVICE@ \
 	@CAMSHR@ \
         @REMCAM@ \
         @CCL@     \
