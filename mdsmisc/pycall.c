@@ -36,7 +36,9 @@ int PyCall(char *cmd,int lock) {
       strcat(lib,".so");
     }
     /*** See if python routines are already available ***/
+#ifndef HAVE_WINDOWS_H
     handle = dlopen(0,RTLD_NOLOAD);
+#endif
     loadrtn(PyGILState_Ensure,0);
     /*** If not, load the python library ***/
     if (!PyGILState_Ensure) {
