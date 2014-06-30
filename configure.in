@@ -87,15 +87,6 @@ AS_CASE([$enable_perf],
         [yes], [AC_DEFINE([USE_PERF], [], [Define if you want to collect performance statistics -- linux only])])
 AC_MSG_RESULT([$enable_perf])
 
-AC_ARG_ENABLE([mingw],
-              [AS_HELP_STRING([--enable-mingw],
-                              [enable cross-platform build for Windows on linux])],
-              [],
-              [AS_VAR_SET([enable_mingw], [no])])
-AS_CASE([$enable_mingw],
-        [yes], [AC_DEFINE([USE_MINGW], [], [Define if you want to build for Windows platform -- linux only])])
-AC_MSG_RESULT([$enable_mingw])
-
 AC_MSG_CHECKING([whether to build the java components])
 AC_ARG_ENABLE([java],
               [AS_HELP_STRING([--disable-java],
@@ -376,7 +367,7 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
        GEN_DEVICE=""
        LIBPTHREAD=-pthread
        SOCKETLIB="-lws2_32"
-       CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing -mthreads";
+       CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing";
        LD="gcc"
        CFLAGS="$CFLAGS -m64"
        LD="gcc -m64 -static-libgcc"
@@ -401,8 +392,6 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
        TAR_EXCLUDE="--exclude";;
 
 *86*linux*)
-     if [ "$USE_MINGW" != "yes" ]
-     then 
        CFLAGS="$CFLAGS -fpic -shared-libgcc -fno-strict-aliasing";
        FORLD="$F77";
        LD="gcc"
@@ -472,41 +461,8 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
        jni_inc_dir="$with_jdk/include";
        jni_md_inc_dir="$with_jdk/include/linux";
        HUP_TO_XINETD="/etc/rc.d/init.d/xinetd restart";
-       HUP_TO_INETD="kill -HUP \`/sbin/pidof inetd\`";
-     else
-       CC=/usr/bin/x86_64-w64-mingw32-gcc
-       F77=/usr/bin/x86_64-w64-mingw32-gfortran
-       CPP=/usr/bin/x86_64-w64-mingw32-c++
-       MINGW="yes"
-       IDLMDSEVENT=""
-       LIBPRE=""
-       GEN_DEVICE=""
-       LIBPTHREAD=-pthread
-       SOCKETLIB="-lws2_32"
-       CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing -mthreads";
-       LD="gcc"
-       CFLAGS="$CFLAGS -m64"
-       LD="gcc -m64 -static-libgcc"
-       FFLAGS="$FFLAGS -m64 -fno-range-check"
-       LOC="loc"
-       FORLD="gfortran -m64 -static-libgcc"
-       BINDIR=bin_x86_64
-       MAKELIBDIR="\$(top_srcdir)/$BINDIR"
-       MAKESHLIBDIR="\$(top_srcdir)/$BINDIR/"
-       MAKEBINDIR="\$(top_srcdir)/$BINDIR/"
-       FFLAGS="$FFLAGS -fpic -fno-backslash";
-       LDSHARE="-Wl,-Bdynamic ";
-       LDARC="-Wl,-Bstatic ";
-       LD_LDSHARE="-Bdynamic ";
-       LD_LDARC="-Bstatic ";
-       LINKSHARED="-shared ";
-       FOR_LINKSHARED="$LINKSHARED";
-       LIBPATH="PATH";
-       FOR_LDFLAGS="";
-       FEXECLIBDIR="-L";
-       SHARETYPE=".dll";
-       TAR_EXCLUDE="--exclude";
-     fi;;
+       HUP_TO_INETD="kill -HUP \`/sbin/pidof inetd\`";;
+
 *arm-xilinx-linux-gnueabi) echo "configuring for Xylinx zynq board (arm cortex a9)";
        CC=arm-xilinx-linux-gnueabi-gcc;
        LD=arm-xilinx-linux-gnueabi-ld;

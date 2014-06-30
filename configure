@@ -863,7 +863,6 @@ enable_shared
 enable_mdsip_connections
 enable_nodebug
 enable_perf
-enable_mingw
 enable_java
 enable_universal
 with_jdk
@@ -1535,7 +1534,6 @@ Optional Features:
                           Prevent using mdsip connections.
   --enable-nodebug        compile without debug info
   --enable-perf           enable MDSplus I/O statistics
-  --enable-mingw          enable cross-platform build for Windows on linux
   --disable-java          Do not build java libraries and applications
   --enable-universal      Build MacOSX Universal Binary
   --enable-globus         use globus_io for mdsip communications
@@ -6644,24 +6642,6 @@ esac
 { $as_echo "$as_me:$LINENO: result: $enable_perf" >&5
 $as_echo "$enable_perf" >&6; }
 
-# Check whether --enable-mingw was given.
-if test "${enable_mingw+set}" = set; then
-  enableval=$enable_mingw;
-else
-  enable_mingw=no
-fi
-
-case $enable_mingw in
-  yes)
-cat >>confdefs.h <<\_ACEOF
-#define USE_MINGW /**/
-_ACEOF
- ;;
-esac
-
-{ $as_echo "$as_me:$LINENO: result: $enable_mingw" >&5
-$as_echo "$enable_mingw" >&6; }
-
 { $as_echo "$as_me:$LINENO: checking whether to build the java components" >&5
 $as_echo_n "checking whether to build the java components... " >&6; }
 # Check whether --enable-java was given.
@@ -7172,7 +7152,7 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
        GEN_DEVICE=""
        LIBPTHREAD=-pthread
        SOCKETLIB="-lws2_32"
-       CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing -mthreads";
+       CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing";
        LD="gcc"
        CFLAGS="$CFLAGS -m64"
        LD="gcc -m64 -static-libgcc"
@@ -7197,8 +7177,6 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
        TAR_EXCLUDE="--exclude";;
 
 *86*linux*)
-     if  "$USE_MINGW" != "yes"
-     then
        CFLAGS="$CFLAGS -fpic -shared-libgcc -fno-strict-aliasing";
        FORLD="$F77";
        LD="gcc"
@@ -7268,41 +7246,8 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
        jni_inc_dir="$with_jdk/include";
        jni_md_inc_dir="$with_jdk/include/linux";
        HUP_TO_XINETD="/etc/rc.d/init.d/xinetd restart";
-       HUP_TO_INETD="kill -HUP \`/sbin/pidof inetd\`";
-     else
-       CC=/usr/bin/x86_64-w64-mingw32-gcc
-       F77=/usr/bin/x86_64-w64-mingw32-gfortran
-       CPP=/usr/bin/x86_64-w64-mingw32-c++
-       MINGW="yes"
-       IDLMDSEVENT=""
-       LIBPRE=""
-       GEN_DEVICE=""
-       LIBPTHREAD=-pthread
-       SOCKETLIB="-lws2_32"
-       CFLAGS="$CFLAGS -fpic -static-libgcc -fno-strict-aliasing -mthreads";
-       LD="gcc"
-       CFLAGS="$CFLAGS -m64"
-       LD="gcc -m64 -static-libgcc"
-       FFLAGS="$FFLAGS -m64 -fno-range-check"
-       LOC="loc"
-       FORLD="gfortran -m64 -static-libgcc"
-       BINDIR=bin_x86_64
-       MAKELIBDIR="\$(top_srcdir)/$BINDIR"
-       MAKESHLIBDIR="\$(top_srcdir)/$BINDIR/"
-       MAKEBINDIR="\$(top_srcdir)/$BINDIR/"
-       FFLAGS="$FFLAGS -fpic -fno-backslash";
-       LDSHARE="-Wl,-Bdynamic ";
-       LDARC="-Wl,-Bstatic ";
-       LD_LDSHARE="-Bdynamic ";
-       LD_LDARC="-Bstatic ";
-       LINKSHARED="-shared ";
-       FOR_LINKSHARED="$LINKSHARED";
-       LIBPATH="PATH";
-       FOR_LDFLAGS="";
-       FEXECLIBDIR="-L";
-       SHARETYPE=".dll";
-       TAR_EXCLUDE="--exclude";
-     fi;;
+       HUP_TO_INETD="kill -HUP \`/sbin/pidof inetd\`";;
+
 *arm-xilinx-linux-gnueabi) echo "configuring for Xylinx zynq board (arm cortex a9)";
        CC=arm-xilinx-linux-gnueabi-gcc;
        LD=arm-xilinx-linux-gnueabi-ld;
