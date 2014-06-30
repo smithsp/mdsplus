@@ -7269,8 +7269,9 @@ mips*) CFLAGS="$CFLAGS -signed -D_BSD_SIGNALS -KPIC";
        HUP_TO_XINETD="/etc/rc.d/init.d/xinetd restart";
        HUP_TO_INETD="kill -HUP \`/sbin/pidof inetd\`";
      else
-       cc=
-       F77=gfortran
+       CC=/usr/bin/x86_64-w64-mingw32-gcc
+       F77=/usr/bin/x86_64-w64-mingw32-gfortran
+       CPP=/usr/bin/x86_64-w64-mingw32-c++
        MINGW="yes"
        LIBPRE=""
        GEN_DEVICE=""
