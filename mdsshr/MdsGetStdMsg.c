@@ -1894,6 +1894,26 @@ int MdsGetStdMsg(int status, const char **fac_out, const char **msgnam_out, cons
         sts = 1;}
         break;
 
+/* TclINVLEVEL */
+      case 0x2a0018:
+        {static const char *text="Invalid detail level specified. Must be between 0-7";
+        static const char *msgnam="INVLEVEL";
+        *fac_out = FAC_Tcl;
+        *msgnam_out = msgnam;
+        *text_out = text;
+        sts = 1;}
+        break;
+
+/* TclINVSTATUS */
+      case 0x2a0020:
+        {static const char *text="Invalid status value specified Must be integer value";
+        static const char *msgnam="INVSTATUS";
+        *fac_out = FAC_Tcl;
+        *msgnam_out = msgnam;
+        *text_out = text;
+        sts = 1;}
+        break;
+
 /* MdsdclSUCCESS */
       case 0x8020008:
         {static const char *text="Normal successful completion";

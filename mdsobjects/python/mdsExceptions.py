@@ -924,6 +924,16 @@ class TclFAILED_ESSENTIAL(Exception):
     def __str__(self):
         return "Essential action failed"
 
+class TclINVLEVEL(Exception):
+    msgnum=0x2a0018
+    def __str__(self):
+        return "Invalid detail level specified. Must be between 0-7"
+
+class TclINVSTATUS(Exception):
+    msgnum=0x2a0020
+    def __str__(self):
+        return "Invalid status value specified Must be integer value"
+
 class MdsdclSUCCESS(Exception):
     msgnum=0x8020008
     def __str__(self):
@@ -1756,6 +1766,8 @@ def MDSplusException(msgnum):
 0x8019868:"CamOFFLINE",
 0x2a0008:"TclNORMAL",
 0x2a0010:"TclFAILED_ESSENTIAL",
+0x2a0018:"TclINVLEVEL",
+0x2a0020:"TclINVSTATUS",
 0x8020008:"MdsdclSUCCESS",
 0x8020010:"MdsdclEXIT",
 0x8020018:"MdsdclERROR",

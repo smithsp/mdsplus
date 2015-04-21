@@ -40,8 +40,6 @@
 #include "tdirefstandard.h"
 #include "tdinelements.h"
 
-
-
 extern unsigned short OpcVector;
 
 extern int TdiGetData();
@@ -97,8 +95,9 @@ STATIC_CONSTANT struct item {
   "NUMBER_OF_CHILDREN", 0, 0, NciNUMBER_OF_CHILDREN, DTYPE_L, 4}, {
   "NUMBER_OF_ELTS", 0, 0, NciNUMBER_OF_ELTS, DTYPE_L, 4}, {
   "NUMBER_OF_MEMBERS", 0, 0, NciNUMBER_OF_MEMBERS, DTYPE_L, 4}, {
-  "ON", NciM_ON, 0, /*special */ NciGET_FLAGS, DTYPE_BU, 1},
-  {
+  "NUMVIS_CHILDREN", 0, 0, NciNUMVIS_MEMBERS, DTYPE_L, 4}, {
+  "NUMVIS_MEMBERS", 0, 0, NciNUMVIS_CHILDREN, DTYPE_L, 4}, {
+  "ON", NciM_ON, 0, /*special */ NciGET_FLAGS, DTYPE_BU, 1}, {
   "ORIGINAL_PART_NAME", 0, 0, NciORIGINAL_PART_NAME, DTYPE_T, 0}, {
   "OWNER_ID", 0, 0, NciOWNER_ID, DTYPE_LU, 4}, {
   "PARENT", 0, 0, NciPARENT, DTYPE_NID, 4}, {
@@ -131,6 +130,9 @@ STATIC_CONSTANT struct item {
   "USAGE_TASK", 0xff, TreeUSAGE_TASK, NciUSAGE, DTYPE_BU, 1}, {
   "USAGE_TEXT", 0xff, TreeUSAGE_TEXT, NciUSAGE, DTYPE_BU, 1}, {
   "USAGE_WINDOW", 0xff, TreeUSAGE_WINDOW, NciUSAGE, DTYPE_BU, 1}, {
+  "VIS_CHILDREN", 0, NciNUMVIS_CHILDREN, NciVIS_CHILDREN, DTYPE_NID, 4}, {
+  "VIS_MEMBERS", 0, NciNUMVIS_MEMBERS, NciVIS_MEMBERS, DTYPE_NID, 4}, {
+  "VISIBLE", 0, 0, NciVISIBLE, DTYPE_BU, 1}, {
   "VERSIONS", NciM_VERSIONS, NciM_VERSIONS, NciGET_FLAGS, DTYPE_BU, 1}, {
 "WRITE_ONCE", NciM_WRITE_ONCE, NciM_WRITE_ONCE, NciGET_FLAGS, DTYPE_BU, 1},};
 

@@ -32,6 +32,7 @@ TreeSerializeNci.c \
 TreeSetDbi.c \
 TreeSetDefault.c \
 TreeSetNci.c \
+TreeSetVisibility.c \
 TreeThreadSafe.c \
 TreeVerify.c \
 RemoteAccess.c

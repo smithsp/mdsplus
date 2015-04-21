@@ -686,6 +686,7 @@ int _TreeWriteTree(void **dbid, char const *exp_ptr, int shotid)
       external_pages = (info_ptr->header->externals * 4 + 511) / 512;
 
       strcat(nfilenam, "#");
+      _TreeSetVisibility(*dblist, 0, 1, 1, 1);
       ntreefd = MDS_IO_OPEN(nfilenam, O_WRONLY | O_CREAT | O_TRUNC, 0777);
       if (ntreefd != -1) {
 	ssize_t num;

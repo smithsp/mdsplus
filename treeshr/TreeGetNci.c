@@ -304,7 +304,7 @@ int _TreeGetNci(void *dbid, int nid_in, struct nci_itm *nci_itm)
       break;
     case NciUSAGE:
       break_on_no_node;
-      set_retlen(sizeof(node->usage));
+      set_retlen(sizeof(unsigned char));
       *(unsigned char *)itm->pointer = node->usage;
       break;
     case NciNODE_NAME:
@@ -475,6 +475,71 @@ int _TreeGetNci(void *dbid, int nid_in, struct nci_itm *nci_itm)
 	break;
       }
 
+    case NciDETAIL_LEVEL:
+      break_on_no_node;
+      set_retlen(sizeof(unsigned char));
+      *(unsigned char *)itm->pointer = node->detail_level;
+      break;
+
+    case NciVISIBLE:
+      {
+	break_on_no_node;
+	set_retlen(sizeof(int));
+	*(int *)itm->pointer = node->invisible==0;
+	break;
+      }
+    case NciNUMVIS_MEMBERS:
+      {
+	break_on_no_node;
+	set_retlen(sizeof(count));
+	count = 0;
+	if (member_of(node))
+	  for (node = member_of(node); node; count += (node->invisible ? 0 : 1), node = brother_of(node) ? brother_of(node) : 0) ;
+	*(int *)(itm->pointer) = count;
+	break;
+      }
+    case NciNUMVIS_CHILDREN:
+      {
+	break_on_no_node;
+	set_retlen(sizeof(count));
+	count = 0;
+	if (child_of(node))
+	  for (node = child_of(node); node; count += (node->invisible ? 0 : 1), node = brother_of(node) ? brother_of(node) : 0) ;
+	*(int *)(itm->pointer) = count;
+	break;
+      }
+    case NciVIS_MEMBERS:
+      {
+	break_on_no_node;
+	out_nids = (NID *) itm->pointer;
+	end_nids = (NID *) (((char *)itm->pointer) + itm->buffer_length);
+	if (member_of(node))
+	  for (node = member_of(node); node && (out_nids + 1 <= end_nids);
+	       node = brother_of(node) ? brother_of(node) : 0) {
+	    if (node->invisible == 0) {
+	      node_to_nid(dblist, node, out_nids);
+	      out_nids++;
+	    }
+	  }
+	retlen = (int)((char *)out_nids - (char *)itm->pointer);
+	break;
+      }
+    case NciVIS_CHILDREN:
+      {
+	break_on_no_node;
+	out_nids = (NID *) itm->pointer;
+	end_nids = (NID *) (((char *)itm->pointer) + itm->buffer_length);
+	if (child_of(node))
+	  for (node = child_of(node); node && (out_nids + 1 <= end_nids);
+	       node = brother_of(node) ? brother_of(node) : 0) {
+	    if (node->invisible == 0) {
+	      node_to_nid(dblist, node, out_nids);
+	      out_nids++;
+	    }
+	  }
+	retlen = (int)((char *)out_nids - (char *)itm->pointer);
+	break;
+      }
     default:
       status = TreeILLEGAL_ITEM;
     }

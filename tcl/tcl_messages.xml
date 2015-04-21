@@ -3,5 +3,7 @@
   <facility name="Tcl" value="42">
     <status name="NORMAL" value="1" severity="Success" text="Normal successful completion"/>
     <status name="FAILED_ESSENTIAL" value="2" severity="Warning" text="Essential action failed"/>
+    <status name="INVLEVEL" value="3" severity="Error" text="Invalid detail level specified. Must be between 0-7"/>
+    <status name="INVSTATUS" value="4" severity="Error" text="Invalid status value specified Must be integer value"/>
   </facility>
 </messages>

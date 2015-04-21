@@ -142,6 +142,25 @@ int _TreeSetNci(void *dbid, int nid_in, NCI_ITM * nci_itm_ptr)
 	  }
 	  return TreeNORMAL;
 	}
+      case NciDETAIL_LEVEL:
+	{
+	  NODE *node_ptr;
+
+/**************************************************
+ First we must check to make sure we are editting
+ a valid tree.
+**************************************************/
+
+	  if (!(IS_OPEN_FOR_EDIT(dblist)))
+	    return TreeNOEDIT;
+
+	  nid_to_node(dblist, nid_ptr, node_ptr);
+	  if (node_ptr->detail_level != *(unsigned char *)itm_ptr->pointer) {
+	    node_ptr->detail_level = *(unsigned char *)itm_ptr->pointer;
+	    dblist->modified = 1;
+	  }
+	  return TreeNORMAL;
+	}
       default:
 	status = TreeILLEGAL_ITEM;
 	break;

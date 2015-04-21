@@ -61,9 +61,11 @@
     SET ATTRIBUTE  - Set an extended attribute for a node.
     SET CURRENT    - Set the current shot number fo a tree.
     SET DEFAULT    - Change the current location in a tree.
+    SET NODE       - Change characteristics of nodes in a tree.
     SET TREE       - Open an MDSplus tree.
     SET VIEW       - Specify a point in time for examining the tree.
                      This command only applies to trees with versioning enabled.
+    SET VISIBLE    - Change visibility characteristics of nodes for traversal apps.
     SHOW ATTRIBUTE - Show an extended attribute for a node.
     SHOW CURRENT   - Show the current shot for a tree.
     SHOW DATA      - Show the data structure stored in a node.
@@ -882,14 +884,15 @@
   </verb>
 
   <type name="SET_TYPE">
-    <keyword name="ATTRIBUTE" syntax="set_attribute"/>"
-    <keyword name="CURRENT" syntax="set_current"/>"
-    <keyword name="DEFAULT" syntax="set_default"/>"
-    <keyword name="NODE" syntax="set_node"/>"
-    <keyword name="SERVER" syntax="set_server"/>"
-    <keyword name="TREE" syntax="set_tree"/>"
-    <keyword name="VIEW" syntax="set_view"/>"
-    <keyword name="VERSIONS" syntax="set_versions"/>"
+    <keyword name="ATTRIBUTE" syntax="set_attribute"/>
+    <keyword name="CURRENT" syntax="set_current"/>
+    <keyword name="DEFAULT" syntax="set_default"/>
+    <keyword name="NODE" syntax="set_node"/>
+    <keyword name="SERVER" syntax="set_server"/>
+    <keyword name="TREE" syntax="set_tree"/>
+    <keyword name="VIEW" syntax="set_view"/>
+    <keyword name="VERSIONS" syntax="set_versions"/>
+    <keyword name="VISIBLE" syntax="set_visible"/>
   </type>
 
   <syntax name="set_attribute">
@@ -1082,6 +1085,7 @@
     <qualifier name="MODEL_WRITE"/>
     <qualifier name="INCLUDED"/>
     <qualifier name="LOG"/>
+    <qualifier name="LEVEL" required="True"/>
     <qualifier name="ESSENTIAL"/>
     <qualifier name="STATUS" required="True"/>
   </syntax>
@@ -1156,6 +1160,43 @@
     <routine name="TclSetVersions"/>
     <qualifier name="MODEL"/>
     <qualifier name="SHOT"/>
+  </syntax>
+
+  <syntax name="set_visible">
+    <help name="SET VISIBLE">
+      Command: SET VISIBLE
+      Purpose: Modify node visible characteristic in an MDSplus tree.
+               Used in applications such as traverser to select nodes of interest.
+      Format: SET VISIBLE node-path-wild /option[/option...]
+      Description:
+
+      The SET VISIBLE command turns on or off the visible property of nodes in a tree
+      for the current running application. The visible property of nodes is not retained
+      when the program exits. It is used in applications such as the traverser to
+      selectively display categories of nodes in the application. The 'option' in the
+      Format above is one of the following:
+
+      DESCENDANTS           - make all descendants of selected nodes visible.
+      LEVEL=level           - Make all nodes with detail level less than or equal
+      RESET                 - Make all nodes in the entire tree invisible before
+                              enabling visibility on selected nodes.
+      NOPARENTS             - Do not make parents of visible nodes visible.
+                              By default any node made visible will also make all
+                              ancestors of the node visible as well.
+			      to level visible.
+      USAGE=usage-list      - Select nodes to make visible based on USAGE.
+			      format= /USAGE=(usage1[,usage2...])      
+
+
+    </help>
+    <routine name="TclSetVisible"/>
+    <parameter name="p1" prompt="What" required="True" type="SET_TYPE"/>
+    <parameter name="p2" label="NODENAME" prompt="Node" required="True"/>
+    <qualifier name="RESET"/>
+    <qualifier name="USAGE" required="True" list="True"/>
+    <qualifier name="DESCENDANTS"/>
+    <qualifier name="PARENTS"/>
+    <qualifier name="LEVEL" required="True"/>
   </syntax>
 
   <verb name="SETEVENT">

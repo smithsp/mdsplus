@@ -38,5 +38,7 @@ void TclNodeTouched(		/* Returns: void                        */
     );
 
 extern void tclUsageToString(char *usage, char **error);
+extern char tclUsageToNumber(char *usage, char **error);
 extern int tclStringToShot(char *str, int *shot, char **error);
 extern void tclAppend(char **output, char *string);
+

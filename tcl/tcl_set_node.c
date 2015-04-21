@@ -3,6 +3,7 @@
 #include        <ncidef.h>
 #include        <usagedef.h>
 #include 	<stdlib.h>
+#include        <dcl.h>
 #ifdef HAVE_ALLOCA_H
 #include        <alloca.h>
 #endif
@@ -27,22 +28,59 @@ int TclSetNode(void *ctx, char **error, char **output)
 {
   int nid;
   int status = 1;
-  int log;
-  int usageMask;
+  int log  = cli_present(ctx, "LOG") & 1;
   void *ctx1 = 0;
   char *nodename = 0;
   char *statusStr = 0;
-  cli_get_value(ctx, "NODENAME", &nodename);
+  int statusVal;
+  char *levelStr = 0;
+  unsigned char level;
+  cli_get_value(ctx, "LEVEL", &levelStr);
+  if (levelStr) {
+    char *endptr;
+    long val = strtol(levelStr, &endptr, 0);
+    free(levelStr);
+    if (endptr[0] != '\0' || (val < 0) || (val > 7)) {
+      sprintf(*error,"Specify a level between 0 and 7\n");
+      return TclINVLEVEL;
+    }
+    level = (unsigned char)val;
+  }
   cli_get_value(ctx, "STATUS", &statusStr);
-  log = cli_present(ctx, "LOG") & 1;
+  if (statusStr) {
+    char *endptr;
+    long val = strtol(statusStr, &endptr, 0);
+    free(statusStr);
+    if (endptr[0] != '\0') {
+      sprintf(*error,"Specify an integer status value\n");
+      return TclINVSTATUS;
+    }
+    statusVal = (int)val;
+  }
 
-  usageMask = -1;
-  while ((status = TreeFindNodeWild(nodename, &nid, &ctx1, usageMask)) & 1) {
+  cli_get_value(ctx, "NODENAME", &nodename);
+  while ((status = TreeFindNodeWild(nodename, &nid, &ctx1, -1)) & 1) {
     if (statusStr) {
-      int statval = atoi(statusStr);
-      NCI_ITM setnci[] = { {sizeof(int), NciSTATUS, 0, 0}, {0, NciEND_OF_LIST, 0, 0} };
-      setnci[0].pointer = (unsigned char *)&statval;
-      TreeSetNci(nid, setnci);
+      NCI_ITM setnci[] = { {sizeof(int), NciSTATUS, (unsigned char *)&statusVal, 0}, {0, NciEND_OF_LIST, 0, 0} };
+      status = TreeSetNci(nid, setnci);
+      if (!(status & 1)) {
+	char *msg = MdsGetMsg(status);
+	*error = malloc(strlen(nodename) + strlen(msg) + 100);
+	sprintf(*error, "Error: Problem setting status value for node %s\n"
+		"Error message was: %s\n", nodename, msg);
+	goto error;
+      }
+    }
+    if (levelStr) {
+      NCI_ITM setnci[] = { {sizeof(level), NciDETAIL_LEVEL, (unsigned char *)&level, 0}, {0, NciEND_OF_LIST, 0, 0} };
+      status = TreeSetNci(nid, setnci);
+      if (!(status & 1)) {
+	char *msg = MdsGetMsg(status);
+	*error = malloc(strlen(nodename) + strlen(msg) + 100);
+	sprintf(*error, "Error: Problem setting detail level value for node %s\n"
+		"Error message was: %s\n", nodename, msg);
+	goto error;
+      }
     }
     switch (cli_present(ctx, "SUBTREE")) {
     case MdsdclPRESENT:
@@ -181,6 +219,7 @@ int TclSetNode(void *ctx, char **error, char **output)
       if (status & 1) {
 	if (log) {
 	  char *nout;
+	  TreeGetNci(nid, get_itmlst);
 	  if (*output) {
 	    *output = realloc(*output, strlen(*output) + dsc_path.length + 100);
 	    nout = *output + strlen(*output);
@@ -188,13 +227,14 @@ int TclSetNode(void *ctx, char **error, char **output)
 	    *output = malloc(strlen(*output) + dsc_path.length + 100);
 	    nout = *output;
 	  }
-	  sprintf(*output, "Node: %.#s modified\n", dsc_path.length, dsc_path.pointer);
+	  sprintf(nout, "Node: %.*s modified\n", dsc_path.length, dsc_path.pointer);
+	  StrFree1Dx(&dsc_path);
 	}
-	StrFree1Dx(&dsc_path);
       } else {
 	char *msg = MdsGetMsg(status);
 	*error = malloc(strlen(msg) + dsc_path.length + 100);
-	sprintf(*output, "Error problem modifying node %.#s\n"
+	TreeGetNci(nid, get_itmlst);
+	sprintf(*output, "Error problem modifying node %.*s\n"
 		"Error message was: %s\n", dsc_path.length, dsc_path.pointer, msg);
 	StrFree1Dx(&dsc_path);
 	goto error;

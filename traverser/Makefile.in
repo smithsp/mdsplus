@@ -15,6 +15,7 @@ SOURCES = \
 	CallbacksUil.c \
         ReadInt.c \
         ReadString.c \
+	ReadNids.c \
         GetNciString.c \
         GetSupportedDevices.c
 

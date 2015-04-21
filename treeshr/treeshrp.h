@@ -298,7 +298,9 @@ PACK_START
       struct big_node_linkage *big_linkage PACK_ATTR;
     } LINK_INFO;
   } INFO;
-  unsigned char usage;
+  unsigned char usage : 4;
+  unsigned char detail_level : 3;
+  unsigned char invisible : 1; /* always clear in treefile */
   unsigned short conglomerate_elt PACK_ATTR;
   char fill;
   unsigned int tag_link;	/* Index of tag info block pointing to this node (index of first tag is 1) */

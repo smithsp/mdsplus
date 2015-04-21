@@ -112,7 +112,7 @@ static char *get_node_name(int nid)
   static int c_nid;
   static DESCRIPTOR_NID(nid_dsc, &c_nid);
   static char *getnci =
-      "TRIM((GETNCI($1, 'IS_CHILD') ? '.' : '')//GETNCI($1, 'NODE_NAME'))//(((GETNCI($1, 'NUMBER_OF_CHILDREN')+GETNCI($1, 'NUMBER_OF_MEMBERS')) > 0) ? '...' : '')";
+      "TRIM((GETNCI($1, 'IS_CHILD') ? '.' : '')//GETNCI($1, 'NODE_NAME'))//(((GETNCI($1, 'NUMVIS_CHILDREN')+GETNCI($1, 'NUMVIS_MEMBERS')) > 0) ? '...' : '')";
   c_nid = nid;
   name = ReadString(getnci, &nid_dsc MDS_END_ARG);
   return name;
@@ -300,33 +300,25 @@ void add_descendents(Widget tree, ListTreeItem * item, int nid)
 {
   static int c_nid;
   static DESCRIPTOR_NID(nid_dsc, &c_nid);
-  static char *get_num_members = "GETNCI($, 'NUMBER_OF_MEMBERS')";
-  static char *get_num_children = "GETNCI($, 'NUMBER_OF_CHILDREN')";
-  static char *get_mem_nid = "GETNCI($, 'MEMBER')";
-  static char *get_bro_nid = "GETNCI($, 'BROTHER')";
-  static char *get_child_nid = "GETNCI($, 'CHILD')";
   int num;
   int i;
+  int *nids = 0;
   int mem_nid;
   int child_nid;
 
   c_nid = nid;
 
   item->open = 1;
-  num = ReadInt(get_num_members, &nid_dsc MDS_END_ARG);
-  for (i = 0; i < num; i++) {
-    mem_nid = ReadInt((i == 0) ? get_mem_nid : get_bro_nid, &nid_dsc MDS_END_ARG);
-    add_item(tree, item, mem_nid);
-    c_nid = mem_nid;
-  }
-
-  c_nid = nid;
-  num = ReadInt(get_num_children, &nid_dsc MDS_END_ARG);
-  for (i = 0; i < num; i++) {
-    child_nid = ReadInt((i == 0) ? get_child_nid : get_bro_nid, &nid_dsc MDS_END_ARG);
-    add_item(tree, item, child_nid);
-    c_nid = child_nid;
-  }
+  nids = ReadNids("GETNCI($, 'VIS_MEMBERS'",&num, &nid_dsc MDS_END_ARG);
+  for (i = 0; i < num; i++ )
+    add_item(tree, item, nids[i]);
+  if (nids)
+    free(nids);
+  nids = ReadNids("GETNCI($, 'VIS_CHILDREN'",&num, &nid_dsc MDS_END_ARG);
+  for (i = 0; i < num; i++ )
+    add_item(tree, item, nids[i]);
+  if (nids)
+    free(nids);
   set_populated(item, 1);
 }
 

@@ -32,6 +32,7 @@ SOURCES = 			\
 	tcl_set_node.c	\
 	tcl_set_tree.c	\
         tcl_set_view.c \
+	tcl_set_visible.c \
 	tcl_setevent.c \
 	tcl_setshow_attribute.c \
 	tcl_setshow_versions.c \

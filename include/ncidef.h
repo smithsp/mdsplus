@@ -70,6 +70,12 @@
 #define NciUSAGE_STR             39
 #define NciCLASS_STR             40
 #define NciVERSION               41
+#define NciDETAIL_LEVEL          42
+#define NciVISIBLE               43
+#define NciNUMVIS_MEMBERS        44
+#define NciNUMVIS_CHILDREN       45
+#define NciVIS_MEMBERS           46
+#define NciVIS_CHILDREN          47
 typedef struct nci_itm {
   short int buffer_length;
   short int code;
