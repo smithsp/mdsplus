@@ -246,6 +246,11 @@ extern "C" {
   extern EXPORT int TreeFindNodeTagsDsc(int nid_in, void **ctx_ptr, struct descriptor *tag);
   extern EXPORT int TreeFindTagWildDsc(char *wild, int *nidout, void **ctx_inout,
 				       struct descriptor_xd *name);
+  extern EXPORT int TreeSetVisibleByLevel(int level, int parents, int descendants);
+  extern EXPORT int _TreeSetVisibleByLevel(void *dbid, int level, int parents, int descendants);
+  extern EXPORT int TreeSetVisibleByUsage(int usageMask, int parents, int descendants);
+  extern EXPORT int _TreeSetVisibleByUsage(void *dbid, int usageMask, int parents, int descendants);
+  
 
 #ifdef __cplusplus
 }

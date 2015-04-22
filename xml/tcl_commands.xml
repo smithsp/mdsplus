@@ -1167,7 +1167,7 @@
       Command: SET VISIBLE
       Purpose: Modify node visible characteristic in an MDSplus tree.
                Used in applications such as traverser to select nodes of interest.
-      Format: SET VISIBLE node-path-wild /option[/option...]
+      Format: SET VISIBLE [/RESET][/DESCENDANTS][/NOPARENTS] /USAGE=list|/LEVEL=list|node-path-wild
       Description:
 
       The SET VISIBLE command turns on or off the visible property of nodes in a tree
@@ -1176,22 +1176,25 @@
       selectively display categories of nodes in the application. The 'option' in the
       Format above is one of the following:
 
-      DESCENDANTS           - make all descendants of selected nodes visible.
-      LEVEL=level           - Make all nodes with detail level less than or equal
       RESET                 - Make all nodes in the entire tree invisible before
                               enabling visibility on selected nodes.
+      DESCENDANTS           - make all descendants of selected nodes visible.
       NOPARENTS             - Do not make parents of visible nodes visible.
                               By default any node made visible will also make all
                               ancestors of the node visible as well.
 			      to level visible.
       USAGE=usage-list      - Select nodes to make visible based on USAGE.
 			      format= /USAGE=(usage1[,usage2...])      
+      LEVEL=level           - Make all nodes with detail level less than or equal
+
+      You can select nodes using either the usage option, the level level option
+      or a node specification.			      
 
 
     </help>
     <routine name="TclSetVisible"/>
     <parameter name="p1" prompt="What" required="True" type="SET_TYPE"/>
-    <parameter name="p2" label="NODENAME" prompt="Node" required="True"/>
+    <parameter name="p2" label="NODENAME"/>
     <qualifier name="RESET"/>
     <qualifier name="USAGE" required="True" list="True"/>
     <qualifier name="DESCENDANTS"/>

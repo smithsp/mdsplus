@@ -10,33 +10,14 @@
 #include <dcl.h>
 #include <string.h>
 #include <strroutines.h>
+#include <mdsdcl_messages.h>
+#include <tcl_messages.h>
+#include <treeshr.h>
 
-static int setVisible(int nid, int parents, int descendants, char **error) {
-  int visible = 1;
-  NCI_ITM setnci[] = { {sizeof(visible), NciVISIBLE, (unsigned char *)&visible, 0}, {0, NciEND_OF_LIST, 0, 0} };
-  int status = TreeSetVisibility(nid, visible, parents, descendants);
-  if (!(status & 1)) {
-    char *msg = MdsGetMsg(status);
-    char *nodename = TreeGetPath(nid);
-    *error = malloc(strlen(nodename) + strlen(msg) + 100);
-    sprintf(*error, "Error: Problem setting visibility for node %s\n"
-	    "Error message was: %s\n", nodename, msg);
-    if (nodename)
-      free(nodename);
-  }
-  return status;
-}
     
 
 	/****************************************************************
 	 * TclSetVisible:
-    <parameter name="p1" prompt="What" required="True" type="SET_TYPE"/>
-    <parameter name="p2" label="NODENAME" prompt="Node" required="True"/>
-    <qualifier name="RESET"/>
-    <qualifier name="USAGE" required="True" list="True"/>
-    <qualifier name="DESCENDANTS"/>
-    <qualifier name="PARENTS"/>
-    <qualifier name="LEVEL" required="True"/>
 	 ****************************************************************/
 int TclSetVisible(void *ctx, char **error, char **output)
 {
@@ -44,39 +25,11 @@ int TclSetVisible(void *ctx, char **error, char **output)
   int status = 1;
   int reset  = cli_present(ctx, "RESET") & 1;
   int descendants = cli_present(ctx, "DESCENDANTS") & 1;
+  int by_level = cli_present(ctx,"LEVEL") & 1;
+  int by_usage = cli_present(ctx,"USAGE") & 1;
+  int by_nodename = cli_present(ctx,"NODENAME") & 1;
   int parents = cli_present(ctx, "PARENTS") != MdsdclNEGATED;
-  void *ctx1 = 0;
-  char *nodename = 0;
-  char *levelStr = 0;
-  int usageMask = -1;
-  unsigned char level;
-  cli_get_value(ctx, "LEVEL", &levelStr);
-  if (levelStr) {
-    char *endptr;
-    long val = strtol(levelStr, &endptr, 0);
-    free(levelStr);
-    if (endptr[0] != '\0' || (val < 0) || (val > 7)) {
-      sprintf(*error,"Specify a level between 0 and 7\n");
-      return TclINVLEVEL;
-    }
-    level = (unsigned char)val;
-  }
-  if (cli_present(ctx, "USAGE") & 1) {
-    char *usageStr = 0;
-    usageMask = 0;
-    while (cli_get_value(ctx, "USAGE", &usageStr) & 1) {
-      if (usageStr) {
-	char usage = tclUsageToNumber(usageStr, error);
-	if (usage == -1) {
-	  free(usageStr);
-	  return 0;
-	} else {
-	  usageMask = usageMask | (1 << usage);
-	  free(usageStr);
-	}
-      }
-    }
-  }
+  char *errmsg = 0;
   if (reset) {
     status = TreeSetVisibility(0, 0, 0, 1);
     if (!(status & 1)) {
@@ -87,38 +40,71 @@ int TclSetVisible(void *ctx, char **error, char **output)
       return status;
     }
   }
-  cli_get_value(ctx, "NODENAME", &nodename);
-  while ((status = TreeFindNodeWild(nodename, &nid, &ctx1, usageMask)) & 1) {
-    int visible = 1;
-    if (levelStr) {
-      unsigned char nodelevel;
-      NCI_ITM getnci[] = { {sizeof(level), NciDETAIL_LEVEL, (unsigned char *)&nodelevel, 0}, {0, NciEND_OF_LIST, 0, 0} };
-      status = TreeGetNci(nid, getnci);
-      if (!(status & 1)) {
-	char *msg = MdsGetMsg(status);
-	free(nodename);
-	nodename = TreeGetPath(nid);
-	*error = malloc(strlen(nodename) + strlen(msg) + 100);
-	sprintf(*error, "Error: Problem getting detail level value for node %s\n"
-		"Error message was: %s\n", nodename, msg);
-	goto error;
+  if (by_level) {
+    char *levelStr = 0;
+    char *endptr;
+    long val;
+    cli_get_value(ctx, "LEVEL", &levelStr);
+    val = strtol(levelStr, &endptr, 0);
+    free(levelStr);
+    if (endptr[0] != '\0' || (val < 0) || (val > 7)) {
+      errmsg = strdup("Specify a level between 0 and 7\n");
+      status = TclINVLEVEL;
+    }
+    if (status & 1)
+      status = TreeSetVisibleByLevel((unsigned char)val, parents, descendants);
+  } else if (by_usage) {
+    char *usageStr = 0;
+    int usageMask = 0;
+    while (cli_get_value(ctx, "USAGE", &usageStr) & 1) {
+      if (usageStr) {
+	char usage = tclUsageToNumber(usageStr, error);
+	if (usage == -1) {
+	  errmsg = strcpy(malloc(strlen(usageStr)+100),"Invalid usage specified: ");
+	  strcat(errmsg,usageStr);
+	  strcat(errmsg,"\n");
+	  status =  TclINVUSAGE;
+	  free(usageStr);
+	  break;
+	}
+        else {
+	  usageMask = usageMask | (1 << usage);
+	  free(usageStr);
+	}
       }
-      visible = nodelevel <= level;
     }
-    if (visible) {
-      status = setVisible(nid, parents, descendants, error);
+    if (status & 1)
+      status = TreeSetVisibleByUsage(usageMask, parents, descendants);
+  } else if (by_nodename) {
+    void *ctx1 = 0;
+    char *nodename = 0;
+    int nodes_found = 0;
+    cli_get_value(ctx, "NODENAME", &nodename);
+    while (TreeFindNodeWild(nodename, &nid, &ctx1, -1) & 1) {
+      status = TreeSetVisibility(nid, 1, parents, descendants);
       if (!(status & 1))
-	goto error;
+	break;
+      nodes_found = 1;
     }
+    TreeFindNodeEnd(&ctx1);
+    if (nodename)
+      free(nodename);
+    if (nodes_found == 0)
+      status = TreeNNF;
+  } else {
+    status = MdsdclERROR;
   }
-  TreeGetDefaultNid(&nid);
-  TclNodeTouched(nid, tree);
-
- error:
-  TreeFindNodeEnd(&ctx1);
-  if (status == TreeNMN)
-    status = 1;
-  if (nodename)
-    free(nodename);
+  if (status & 1)
+    TclNodeTouched(0, tree);
+  else {
+    char *msg = MdsGetMsg(status);
+    *error = malloc(strlen(msg)+100+(errmsg ? strlen(errmsg) : 0));
+    if (errmsg)
+      sprintf(*error,"Error setting nodes visible\n  %s\n  Error message was: %s\n",
+	      errmsg,msg);
+    else
+      sprintf(*error,"Error setting nodes visible\n  Error message was: %s\n",
+	      msg);
+  }
   return status;
 }

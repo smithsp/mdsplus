@@ -1914,6 +1914,16 @@ int MdsGetStdMsg(int status, const char **fac_out, const char **msgnam_out, cons
         sts = 1;}
         break;
 
+/* TclINVUSAGE */
+      case 0x2a0028:
+        {static const char *text="Invalid usage value specified.";
+        static const char *msgnam="INVUSAGE";
+        *fac_out = FAC_Tcl;
+        *msgnam_out = msgnam;
+        *text_out = text;
+        sts = 1;}
+        break;
+
 /* MdsdclSUCCESS */
       case 0x8020008:
         {static const char *text="Normal successful completion";
