@@ -309,12 +309,12 @@ void add_descendents(Widget tree, ListTreeItem * item, int nid)
   c_nid = nid;
 
   item->open = 1;
-  nids = ReadNids("GETNCI($, 'VIS_MEMBERS'",&num, &nid_dsc MDS_END_ARG);
+  nids = ReadNids("GETNCI($, 'VIS_MEMBERS')",&num, &nid_dsc MDS_END_ARG);
   for (i = 0; i < num; i++ )
     add_item(tree, item, nids[i]);
   if (nids)
     free(nids);
-  nids = ReadNids("GETNCI($, 'VIS_CHILDREN'",&num, &nid_dsc MDS_END_ARG);
+  nids = ReadNids("GETNCI($, 'VIS_CHILDREN')",&num, &nid_dsc MDS_END_ARG);
   for (i = 0; i < num; i++ )
     add_item(tree, item, nids[i]);
   if (nids)

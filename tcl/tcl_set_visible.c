@@ -78,12 +78,13 @@ int TclSetVisible(void *ctx, char **error, char **output)
     }
   }
   if (reset) {
+    void *ctx1 = 0;
     NCI_ITM getnci[] = { {0, NciFULLPATH, 0, 0}, {0, NciEND_OF_LIST, 0, 0} };
     TreeGetNci(0,getnci);
     nodename=strcpy(malloc(strlen((char *)getnci[0].pointer)+10),getnci[0].pointer);
     free(getnci[0].pointer);
-    strcat(nodename,".***");
-    while ((status == TreeFindNodeWild(nodename, &nid, &ctx1, -1)) & 1) {
+    strcat(nodename,"***");
+    while ((status = TreeFindNodeWild(nodename, &nid, &ctx1, -1)) & 1) {
       static int zero=0;
       NCI_ITM setnci[] = { {sizeof(int), NciVISIBLE, &zero, 0}, {0, NciEND_OF_LIST, 0, 0} };
       status = TreeSetNci(nid, setnci);
@@ -122,6 +123,9 @@ int TclSetVisible(void *ctx, char **error, char **output)
 	goto error;
     }
   }
+  TreeGetDefaultNid(&nid);
+  TclNodeTouched(nid, tree);
+
  error:
   TreeFindNodeEnd(&ctx1);
   if (status == TreeNMN)

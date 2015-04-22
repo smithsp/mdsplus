@@ -133,14 +133,16 @@ int _TreeSetNci(void *dbid, int nid_in, NCI_ITM * nci_itm_ptr)
 **************************************************/
 
 	  if (!(IS_OPEN_FOR_EDIT(dblist)))
-	    return TreeNOEDIT;
-
-	  nid_to_node(dblist, nid_ptr, node_ptr);
-	  if (node_ptr->usage != *(unsigned char *)itm_ptr->pointer) {
-	    node_ptr->usage = *(unsigned char *)itm_ptr->pointer;
-	    dblist->modified = 1;
+	    status = TreeNOEDIT;
+	  else {
+	    nid_to_node(dblist, nid_ptr, node_ptr);
+	    if (node_ptr->usage != *(unsigned char *)itm_ptr->pointer) {
+	      node_ptr->usage = *(unsigned char *)itm_ptr->pointer;
+	      dblist->modified = 1;
+	    }
+	    status = TreeNORMAL;
 	  }
-	  return TreeNORMAL;
+	  break;
 	}
       case NciDETAIL_LEVEL:
 	{
@@ -152,14 +154,29 @@ int _TreeSetNci(void *dbid, int nid_in, NCI_ITM * nci_itm_ptr)
 **************************************************/
 
 	  if (!(IS_OPEN_FOR_EDIT(dblist)))
-	    return TreeNOEDIT;
+	    status = TreeNOEDIT;
+	  else {
+	    nid_to_node(dblist, nid_ptr, node_ptr);
+	    if (node_ptr->detail_level != *(unsigned char *)itm_ptr->pointer) {
+	      node_ptr->detail_level = *(unsigned char *)itm_ptr->pointer;
+	      dblist->modified = 1;
+	    }
+	    status = TreeNORMAL;
+	  }
+	  break;
+	}
+      case NciVISIBLE:
+	{
+	  NODE *node_ptr;
+
+	  /**************************************************
+          First we must check to make sure we are editting
+          a valid tree.
+	  **************************************************/
 
 	  nid_to_node(dblist, nid_ptr, node_ptr);
-	  if (node_ptr->detail_level != *(unsigned char *)itm_ptr->pointer) {
-	    node_ptr->detail_level = *(unsigned char *)itm_ptr->pointer;
-	    dblist->modified = 1;
-	  }
-	  return TreeNORMAL;
+	  node_ptr->invisible = *(int *)itm_ptr->pointer == 0;
+	  break;
 	}
       default:
 	status = TreeILLEGAL_ITEM;

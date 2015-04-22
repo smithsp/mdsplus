@@ -243,7 +243,7 @@ static int doFull(char **output, int nid, unsigned char nodeUsage, int version)
   char *reference;
   int k;
   char *p;
-  char msg[128];
+  char msg[512];
   static char *usages[] = { "any",
     "structure",
     "action",
@@ -265,8 +265,10 @@ static int doFull(char **output, int nid, unsigned char nodeUsage, int version)
   char class;
   char dtype;
   int dataLen;
+  int visible;
   unsigned short conglomerate_elt;
   int vers;
+  unsigned char level;
   NCI_ITM full_list[] = {
     {4, NciVERSION, &vers, 0}
     , {4, NciGET_FLAGS, &nciFlags, 0}
@@ -275,6 +277,8 @@ static int doFull(char **output, int nid, unsigned char nodeUsage, int version)
     , {1, NciCLASS, &class, 0}
     , {1, NciDTYPE, &dtype, 0}
     , {4, NciLENGTH, &dataLen, 0}
+    , {4, NciVISIBLE, &visible, 0}
+    , {1, NciDETAIL_LEVEL, &level, 0}
     , {2, NciCONGLOMERATE_ELT, &conglomerate_elt, 0}
     , {0, NciEND_OF_LIST, 0, 0}
   };
@@ -285,14 +289,15 @@ static int doFull(char **output, int nid, unsigned char nodeUsage, int version)
     if (version == 0) {
       k = (nodeUsage < MAX_USAGES) ? nodeUsage : (MAX_USAGES - 1);
       p = usages[k];
-      sprintf(msg, "      Status: %s,parent is %s, usage %s%s%s%s\n",
+      sprintf(msg, "      Status: %s,parent is %s, usage %s%s%s%s%s\n",
 	      (nciFlags & NciM_STATE) ? "off" : "on",
 	      (nciFlags & NciM_PARENT_STATE) ? "off" : "on",
 	      p,
 	      (nciFlags & NciM_WRITE_ONCE) ?
 	      (dataLen ? ",readonly" : ",write-once") : "",
 	      (nciFlags & NciM_ESSENTIAL) ? ",essential" : "",
-	      (nciFlags & NciM_CACHED) ? ",cached" : "");
+	      (nciFlags & NciM_CACHED) ? ",cached" : "",
+	      visible ? "" : ",invisible");
       tclAppend(output, msg);
       if (nciFlags & NciM_NO_WRITE_MODEL)
 	tclAppend(output, "      not writeable in model\n");
@@ -338,6 +343,8 @@ static int doFull(char **output, int nid, unsigned char nodeUsage, int version)
 	tclAppend(output, reference);
       }
     }
+    sprintf(msg, "      Detail level: %d\n", level);
+    tclAppend(output, msg);
     sprintf(msg, "      Data inserted: %s    Owner: %s\n", MdsDatime(time), MdsOwner(owner));
     tclAppend(output, msg);
     if (dataLen) {
