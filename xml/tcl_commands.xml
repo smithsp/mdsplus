@@ -1182,10 +1182,10 @@
       NOPARENTS             - Do not make parents of visible nodes visible.
                               By default any node made visible will also make all
                               ancestors of the node visible as well.
-			      to level visible.
       USAGE=usage-list      - Select nodes to make visible based on USAGE.
-			      format= /USAGE=(usage1[,usage2...])      
+                              format= /USAGE=(usage1[,usage2...])      
       LEVEL=level           - Make all nodes with detail level less than or equal
+                              to level visible.
 
       You can select nodes using either the usage option, the level level option
       or a node specification.			      
