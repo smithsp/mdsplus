@@ -46,7 +46,14 @@ int TreeSetVisibility(int nid_in, int visible, int parents, int descendants)
 }
 
 static void setByLevel(PINO_DATABASE *db, NODE *n, int level, int parents, int descendants) {
-  NODE *node;
+  NODE *node = n;
+  if (node->detail_level <= level) {
+    node->invisible = 0;
+    if (parents)
+      setParents(db, node, 0);
+    if (descendants)
+      setDescendants(db, node, 0);
+  }
   for (node = member_of(n); node; node = brother_of(node)) {
     if (node->detail_level <= level) {
       node->invisible = 0;
@@ -70,8 +77,11 @@ static void setByLevel(PINO_DATABASE *db, NODE *n, int level, int parents, int d
 }
 
 int _TreeSetVisibleByLevel(void *dbid, int level, int parents, int descendants) {
-  NODE top = {{0,0}};
-  setByLevel((PINO_DATABASE *)dbid, &top, level, parents, descendants);
+  PINO_DATABASE *db = (PINO_DATABASE *)dbid;
+  NID nid = {0,0};
+  NODE *node;
+  nid_to_node(db, ((NID *)&nid), node);
+  setByLevel((PINO_DATABASE *)dbid, node, level, parents, descendants);
   return TreeNORMAL;
 }
 
@@ -81,7 +91,14 @@ int TreeSetVisibleByLevel(int level, int parents, int descendants)
 }
 
 static void setByUsage(PINO_DATABASE *db, NODE *n, int usageMask, int parents, int descendants) {
-  NODE *node;
+  NODE *node = n;
+  if ((1 << node->usage) & usageMask) {
+    node->invisible = 0;
+    if (parents)
+      setParents(db, node, 0);
+    if (descendants)
+      setDescendants(db, node, 0);
+  }
   for (node = member_of(n); node; node = brother_of(node)) {
     if ((1 << node->usage) & usageMask) {
       node->invisible = 0;
@@ -105,8 +122,11 @@ static void setByUsage(PINO_DATABASE *db, NODE *n, int usageMask, int parents, i
 }
 
 int _TreeSetVisibleByUsage(void *dbid, int usageMask, int parents, int descendants) {
-  NODE top = {{0,0}};
-  setByUsage((PINO_DATABASE *)dbid, &top, usageMask, parents, descendants);
+  PINO_DATABASE *db = (PINO_DATABASE *)dbid;
+  NID nid = {0,0};
+  NODE *node;
+  nid_to_node(db, ((NID *)&nid), node);
+  setByUsage((PINO_DATABASE *)dbid, node, usageMask, parents, descendants);
   return TreeNORMAL;
 }
 
