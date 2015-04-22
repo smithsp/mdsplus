@@ -12,10 +12,14 @@ static void setParents(PINO_DATABASE *db, NODE *n, int invisible) {
 
 static void setDescendants(PINO_DATABASE *db, NODE *n, int invisible) {
   NODE *node;
-  for (node = member_of(n); node; node = brother_of(node))
+  for (node = member_of(n); node; node = brother_of(node)) {
     node->invisible = invisible;
-  for (node = child_of(n); node; node = brother_of(node))
+    setDescendants(db, node, invisible);
+  }
+  for (node = child_of(n); node; node = brother_of(node)) {
     node->invisible = invisible;
+    setDescendants(db, node, invisible);
+  }
 }
 
 int _TreeSetVisibility(void *dbid, int nid_in, int visible, int parents, int descendants) {
