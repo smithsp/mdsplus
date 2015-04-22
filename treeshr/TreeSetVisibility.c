@@ -110,7 +110,7 @@ int _TreeSetVisibleByUsage(void *dbid, int usageMask, int parents, int descendan
   return TreeNORMAL;
 }
 
-int TreeSetVisibleByUsagel(int usageMask, int parents, int descendants)
+int TreeSetVisibleByUsage(int usageMask, int parents, int descendants)
 {
   return _TreeSetVisibleByUsage(*TreeCtx(), usageMask, parents, descendants);
 }
