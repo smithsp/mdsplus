@@ -78,26 +78,14 @@ int TclSetVisible(void *ctx, char **error, char **output)
     }
   }
   if (reset) {
-    void *ctx1 = 0;
-    NCI_ITM getnci[] = { {0, NciFULLPATH, 0, 0}, {0, NciEND_OF_LIST, 0, 0} };
-    TreeGetNci(0,getnci);
-    nodename=strcpy(malloc(strlen((char *)getnci[0].pointer)+10),getnci[0].pointer);
-    free(getnci[0].pointer);
-    strcat(nodename,"***");
-    while ((status = TreeFindNodeWild(nodename, &nid, &ctx1, -1)) & 1) {
-      static int zero=0;
-      NCI_ITM setnci[] = { {sizeof(int), NciVISIBLE, &zero, 0}, {0, NciEND_OF_LIST, 0, 0} };
-      status = TreeSetNci(nid, setnci);
-      if (!(status & 1)) {
-	char *msg = MdsGetMsg(status);
-	*error = malloc(strlen(nodename) + strlen(msg) + 100);
-	sprintf(*error, "Error: Problem setting visibility for node %s\n"
-		"Error message was: %s\n", nodename, msg);
-	goto error;
-      }
+    status = TreeSetVisibility(0, 0, 0, 1);
+    if (!(status & 1)) {
+      char *msg = MdsGetMsg(status);
+      *error = malloc(strlen(msg) + 100);
+      sprintf(*error, "Error: Problem resetting visibility\n"
+	    "Error message was: %s\n", msg);
+      return status;
     }
-    free(nodename);
-    TreeFindNodeEnd(&ctx1);
   }
   cli_get_value(ctx, "NODENAME", &nodename);
   while ((status = TreeFindNodeWild(nodename, &nid, &ctx1, usageMask)) & 1) {
