@@ -55,7 +55,7 @@ local@LIBPRE@MdsMath32 = @LIBPRE@MdsMath@SHARETYPE@_i386
 LDFLAGS+=@FFLAGS@
 
 
-ifeq "@MACOSX@" ""
+ifeq "" ""
 LIBRARIES = $(@LIBPRE@MdsMath)
 else
 LIBRARIES = $(local@LIBPRE@MdsMath)

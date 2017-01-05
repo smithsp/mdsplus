@@ -7452,7 +7452,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
        HUP_TO_INETD="kill -HUP \`/sbin/pidof inetd\`";;
 *apple-darwin*) echo "Configuring for MacOS X";
        MACOSX="macosx"
-       CFLAGS="$CFLAGS -arch x86_64 -arch i386 -dynamic";
+       CFLAGS="$CFLAGS -arch x86_64  -dynamic";
        if (test "$F77" = "f77"); then
           FFLAGS="$FFLAGS -w -f -V -W"
 		  FORLD="$F77"
@@ -7478,7 +7478,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
        UILPATH=/usr/OpenMotif/bin;
        MOTIF_LDARC="-Wl,-bind_at_load -multiply_defined suppress -L/usr/OpenMotif/lib"
        MOTIF_LD_LDARC="-multiply_defined suppress -L/usr/OpenMotif/lib"
-       	   	   LINKSHARED="$LDFLAGS -shared -arch i386 -arch x86_64";
+       	   	   LINKSHARED="$LDFLAGS -shared -arch x86_64";
            FOR_LINKSHARED="$LDFLAGS -shared";
 	   LINKMODULE="$LDFLAGS -bundle -undefined dynamic_lookup";
        IDL_LD="";
