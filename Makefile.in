@@ -17,7 +17,6 @@ JAVA_APS = javamds \
 
 MOTIF_APS = xmdsshr \
 	    actions \
-	    dwscope \
 	    @IDLMDSWIDGETS@ \
             mitdevices \
             traverser
